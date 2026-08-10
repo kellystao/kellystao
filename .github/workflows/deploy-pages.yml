@@ -24,6 +24,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Cache-bust CSS/JS (GitHub Pages CDN)
+        env:
+          VERSION: ${{ github.sha }}
+        run: |
+          python3 <<'PY'
+          import os, re
+          version = os.environ["VERSION"][:7]
+          path = "index.html"
+          text = open(path, encoding="utf-8").read()
+
+          def bust(match):
+              attr, quote, url = match.group(1), match.group(2), match.group(3)
+              base = url.split("?", 1)[0]
+              return f"{attr}={quote}{base}?v={version}{quote}"
+
+          updated, count = re.subn(
+              r'(href|src)=(["\'])(?!https?:|//)([^"\']+\.(?:css|js))\2',
+              bust,
+              text,
+          )
+          open(path, "w", encoding="utf-8", newline="\n").write(updated)
+          print(f"Cache-busted {count} asset URL(s) with v={version}")
+          if count == 0:
+              raise SystemExit("No local CSS/JS assets found to cache-bust in index.html")
+          PY
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
