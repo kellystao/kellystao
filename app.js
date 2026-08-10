@@ -200,6 +200,39 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
     render();
   }
   
+  function isSiteDark() {
+    return document.body.classList.contains('dark');
+  }
+
+  /**
+   * Classes de botão/painel dos filtros conforme o tema do site (body.dark).
+   */
+  function getFilterThemeClasses() {
+    const dark = isSiteDark();
+    return {
+      dark,
+      btnIdle: dark
+        ? 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
+        : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200',
+      btnActive: dark
+        ? 'bg-slate-700 text-white border-red-500 shadow-sm ring-1 ring-red-500/50'
+        : 'bg-slate-900 text-white border-slate-900 shadow-sm',
+      panel: dark
+        ? 'filter-dropdown-panel bg-slate-900 border-slate-800'
+        : 'filter-dropdown-panel bg-white border-slate-200',
+      panelTitle: dark ? 'text-slate-200' : 'text-slate-800',
+      panelItem: dark ? 'text-slate-200' : 'text-slate-700',
+      panelHover: dark ? 'hover:bg-slate-800' : 'hover:bg-slate-50',
+      panelBorder: dark ? 'border-slate-800' : 'border-slate-100',
+      panelLink: dark ? 'text-red-400 hover:text-red-300' : 'text-red-600 hover:text-red-700',
+      countBadge: dark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500',
+      checkboxBorder: dark ? 'border-slate-600' : 'border-slate-300',
+      resetBtn: dark
+        ? 'text-slate-300 hover:text-red-400 bg-slate-800 hover:bg-slate-700 border-slate-700'
+        : 'text-slate-600 hover:text-red-600 bg-slate-100 hover:bg-red-50 border-slate-200'
+    };
+  }
+
   /**
    * Renderiza a interface do menu suspenso (dropdown) de filtro por Posição.
    */
@@ -211,6 +244,7 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
     const selectedCount = state.selectedPositions.length;
     const isAllSelected = selectedCount === totalPosCount;
     const isOpen = state.openDropdown === 'position';
+    const ft = getFilterThemeClasses();
   
     let buttonLabel = 'Posições: Todas';
     let shortLabel = 'Posições';
@@ -227,14 +261,12 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
       shortLabel = `${selectedCount} pos.`;
     }
   
-    const btnActiveClass = (!isAllSelected || isOpen)
-      ? 'bg-slate-900 text-white border-slate-900 shadow-sm dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100'
-      : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700';
+    const btnClass = (!isAllSelected || isOpen) ? ft.btnActive : ft.btnIdle;
   
     let html = `
       <button
         onclick="toggleDropdown('position', event)"
-        class="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl border text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1.5 sm:gap-2 ${btnActiveClass}"
+        class="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl border text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1.5 sm:gap-2 ${btnClass}"
         title="${buttonLabel}"
         aria-label="${buttonLabel}">
         <i data-lucide="users" class="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"></i>
@@ -246,10 +278,10 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
   
     if (isOpen) {
       html += `
-        <div onclick="event.stopPropagation()" class="absolute left-0 mt-2 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-40 p-3 animate-fade-in space-y-2">
-          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2 px-1">
-            <span class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Posições</span>
-            <button onclick="toggleAllPositions()" class="text-[11px] text-red-600 dark:text-red-400 hover:text-red-700 font-semibold hover:underline">
+        <div onclick="event.stopPropagation()" class="absolute left-0 mt-2 w-64 border rounded-2xl shadow-xl z-50 p-3 animate-fade-in space-y-2 ${ft.panel}">
+          <div class="flex items-center justify-between border-b ${ft.panelBorder} pb-2 px-1">
+            <span class="text-xs font-bold ${ft.panelTitle} uppercase tracking-wider">Posições</span>
+            <button onclick="toggleAllPositions()" class="text-[11px] ${ft.panelLink} font-semibold hover:underline">
               ${isAllSelected ? 'Desmarcar todas' : 'Marcar todas'}
             </button>
           </div>
@@ -260,17 +292,17 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
               const count = state.items.filter(i => i.position === pos.id).length;
   
               return `
-                <label class="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer select-none transition">
+                <label class="flex items-center justify-between p-2 rounded-xl ${ft.panelHover} cursor-pointer select-none transition">
                   <div class="flex items-center gap-2.5">
                     <input
                       type="checkbox"
                       ${isChecked ? 'checked' : ''}
                       onchange="togglePosition('${pos.id}')"
-                      class="w-4 h-4 rounded border-slate-300 dark:border-slate-700 text-red-600 focus:ring-red-500 cursor-pointer"
+                      class="w-4 h-4 rounded ${ft.checkboxBorder} text-red-600 focus:ring-red-500 cursor-pointer"
                     />
-                    <span class="text-xs font-medium text-slate-700 dark:text-slate-200">${pos.title}</span>
+                    <span class="text-xs font-medium ${ft.panelItem}">${pos.title}</span>
                   </div>
-                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-mono">${count}</span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${ft.countBadge} font-mono">${count}</span>
                 </label>
               `;
             }).join('')}
@@ -293,6 +325,7 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
     const selectedCount = state.selectedStatuses.length;
     const isAllSelected = selectedCount === totalStatusCount;
     const isOpen = state.openDropdown === 'status';
+    const ft = getFilterThemeClasses();
   
     const stTitleMap = { 'ESPECULAÇÃO': 'Especulação', 'CONTRATADO': 'Contratado', 'OUTRO CLUBE': 'Foi pra outro time' };
     const stShortMap = { 'ESPECULAÇÃO': 'Especulação', 'CONTRATADO': 'Contratado', 'OUTRO CLUBE': 'Outro time' };
@@ -311,20 +344,30 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
       shortLabel = `${selectedCount} st.`;
     }
   
-    const btnActiveClass = (!isAllSelected || isOpen)
-      ? 'bg-slate-900 text-white border-slate-900 shadow-sm dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100'
-      : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700';
+    const btnClass = (!isAllSelected || isOpen) ? ft.btnActive : ft.btnIdle;
   
     const statusList = [
-      { id: 'ESPECULAÇÃO', title: 'Especulação', badgeClass: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300' },
-      { id: 'CONTRATADO', title: 'Contratado', badgeClass: 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300' },
-      { id: 'OUTRO CLUBE', title: 'Foi pra outro time', badgeClass: 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300' }
+      {
+        id: 'ESPECULAÇÃO',
+        title: 'Especulação',
+        badgeClass: ft.dark ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-700'
+      },
+      {
+        id: 'CONTRATADO',
+        title: 'Contratado',
+        badgeClass: ft.dark ? 'bg-emerald-950 text-emerald-300' : 'bg-emerald-50 text-emerald-700'
+      },
+      {
+        id: 'OUTRO CLUBE',
+        title: 'Foi pra outro time',
+        badgeClass: ft.dark ? 'bg-amber-950 text-amber-300' : 'bg-amber-50 text-amber-700'
+      }
     ];
   
     let html = `
       <button
         onclick="toggleDropdown('status', event)"
-        class="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl border text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1.5 sm:gap-2 ${btnActiveClass}"
+        class="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl border text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1.5 sm:gap-2 ${btnClass}"
         title="${buttonLabel}"
         aria-label="${buttonLabel}">
         <i data-lucide="filter" class="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"></i>
@@ -336,10 +379,10 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
   
     if (isOpen) {
       html += `
-        <div onclick="event.stopPropagation()" class="absolute left-0 mt-2 w-60 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-40 p-3 animate-fade-in space-y-2">
-          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2 px-1">
-            <span class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Status</span>
-            <button onclick="toggleAllStatuses()" class="text-[11px] text-red-600 dark:text-red-400 hover:text-red-700 font-semibold hover:underline">
+        <div onclick="event.stopPropagation()" class="absolute left-0 mt-2 w-60 border rounded-2xl shadow-xl z-50 p-3 animate-fade-in space-y-2 ${ft.panel}">
+          <div class="flex items-center justify-between border-b ${ft.panelBorder} pb-2 px-1">
+            <span class="text-xs font-bold ${ft.panelTitle} uppercase tracking-wider">Status</span>
+            <button onclick="toggleAllStatuses()" class="text-[11px] ${ft.panelLink} font-semibold hover:underline">
               ${isAllSelected ? 'Desmarcar todos' : 'Marcar todos'}
             </button>
           </div>
@@ -355,15 +398,15 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
               }).length;
   
               return `
-                <label class="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer select-none transition">
+                <label class="flex items-center justify-between p-2 rounded-xl ${ft.panelHover} cursor-pointer select-none transition">
                   <div class="flex items-center gap-2.5">
                     <input
                       type="checkbox"
                       ${isChecked ? 'checked' : ''}
                       onchange="toggleStatus('${st.id}')"
-                      class="w-4 h-4 rounded border-slate-300 dark:border-slate-700 text-red-600 focus:ring-red-500 cursor-pointer"
+                      class="w-4 h-4 rounded ${ft.checkboxBorder} text-red-600 focus:ring-red-500 cursor-pointer"
                     />
-                    <span class="text-xs font-medium text-slate-700 dark:text-slate-200">${st.title}</span>
+                    <span class="text-xs font-medium ${ft.panelItem}">${st.title}</span>
                   </div>
                   <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${st.badgeClass}">${count}</span>
                 </label>
@@ -387,10 +430,11 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
     const isCustomized = state.selectedPositions.length < ALL_POSITIONS.length || state.selectedStatuses.length < ALL_STATUSES.length;
   
     if (isCustomized) {
+      const ft = getFilterThemeClasses();
       container.innerHTML = `
         <button
           onclick="resetFilters()"
-          class="p-1.5 sm:px-3 sm:py-2 text-[11px] sm:text-xs font-semibold text-slate-600 hover:text-red-600 bg-slate-100 hover:bg-red-50 rounded-lg sm:rounded-xl border border-slate-200 transition flex items-center gap-1.5"
+          class="p-1.5 sm:px-3 sm:py-2 text-[11px] sm:text-xs font-semibold rounded-lg sm:rounded-xl border transition flex items-center gap-1.5 ${ft.resetBtn}"
           title="Restaurar todos os filtros"
           aria-label="Restaurar todos os filtros">
           <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
@@ -554,12 +598,12 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
                         <div class="flex items-center gap-1 text-slate-500 font-medium ${hasDestination ? 'ml-auto' : ''}">
                           <span>Visto em:</span>
                           ${hasUrl ? `
-                            <a href="${linkUrl}" target="_blank" rel="noopener noreferrer" class="text-red-600 hover:text-red-700 hover:underline font-medium inline-flex items-center gap-1">
+                            <a href="${linkUrl}" target="_blank" rel="noopener noreferrer" class="source-link text-red-600 hover:text-red-700 hover:underline font-medium inline-flex items-center gap-1">
                               <span>${item.source}</span>
                               <i data-lucide="external-link" class="w-3 h-3 text-red-600"></i>
                             </a>
                           ` : `
-                            <span class="text-slate-700 font-medium">${item.source}</span>
+                            <span class="source-link text-red-600 font-medium">${item.source}</span>
                           `}
                         </div>
                       ` : ''}
@@ -640,6 +684,12 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
         icon.className = 'w-4 h-4 text-slate-600';
       }
     }
+    if (window.lucide) lucide.createIcons();
+    // Reaplica cores dos filtros ao trocar o tema (body.dark ≠ Tailwind dark:)
+    renderPositionDropdown();
+    renderStatusDropdown();
+    renderResetFiltersContainer();
+    renderFilterCounter();
     if (window.lucide) lucide.createIcons();
   }
   

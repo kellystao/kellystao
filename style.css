@@ -81,8 +81,12 @@ body.dark header {
   border-color: #1e293b;
 }
 
-body.dark header h1,
-body.dark header .text-slate-900 {
+body.dark header h1 {
+  color: #f8fafc !important;
+}
+
+/* Evita que botões de filtro ativos (text-slate-900) fiquem com texto branco ilegível */
+body.dark header .text-slate-900:not(button):not(button *) {
   color: #f8fafc !important;
 }
 
@@ -91,14 +95,45 @@ body.dark header .text-slate-500 {
   color: #94a3b8 !important;
 }
 
-body.dark header button:not(#site-theme-toggle) {
+body.dark header #site-theme-toggle,
+body.dark header .header-action-btn {
   background-color: #1e293b;
   border-color: #334155;
   color: #e2e8f0;
 }
 
-body.dark header button:not(#site-theme-toggle):hover {
+body.dark header #site-theme-toggle:hover,
+body.dark header .header-action-btn:hover {
   background-color: #334155;
+}
+
+body.dark header .filter-dropdown-panel {
+  background-color: #0f172a;
+  border-color: #1e293b;
+  color: #e2e8f0;
+}
+
+body.dark header .filter-dropdown-panel .text-slate-800,
+body.dark header .filter-dropdown-panel .text-slate-700,
+body.dark header .filter-dropdown-panel .text-slate-200 {
+  color: #e2e8f0 !important;
+}
+
+body.dark header .filter-dropdown-panel .border-slate-100 {
+  border-color: #1e293b !important;
+}
+
+body.dark header .filter-dropdown-panel label:hover {
+  background-color: #1e293b;
+}
+
+body.dark #filter-counter,
+body.dark #filter-counter .text-slate-900 {
+  color: #94a3b8 !important;
+}
+
+body.dark #filter-counter strong {
+  color: #f1f5f9 !important;
 }
 
 body.dark .clean-card {
@@ -124,6 +159,17 @@ body.dark .clean-card:hover h3 {
 body.dark .clean-card p.text-slate-500,
 body.dark .clean-card span.text-slate-500 {
   color: #94a3b8 !important;
+}
+
+body.dark .clean-card .source-link,
+body.dark .clean-card .source-link .text-red-600,
+body.dark .clean-card a.source-link {
+  color: #f87171 !important; /* red-400 — legível no card escuro */
+}
+
+body.dark .clean-card a.source-link:hover,
+body.dark .clean-card a.source-link:hover .text-red-600 {
+  color: #fca5a5 !important;
 }
 
 body.dark .section-title-line h2 {
