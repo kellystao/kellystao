@@ -54,7 +54,7 @@ window.INITIAL_SPECULATIONS = [
   { id: '36', playerName: 'Yuri Alberto', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Corinthians', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
   { id: '37', playerName: 'Kauã Elias', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Shakhtar', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
   { id: '38', playerName: 'Luís Suárez', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Sporting', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
-  { id: '39', playerName: 'Alejo Veliz', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Tottenham', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
+  { id: '39', playerName: 'Alejo Véliz', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Tottenham', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
   { id: '40', playerName: 'Rodrigo Muniz', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Fulham', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
   { id: '41', playerName: 'Vitinha', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Genoa', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
   { id: '42', playerName: 'Richarlison', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Tottenham', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
