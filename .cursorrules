@@ -27,12 +27,11 @@ A lista de jogadores segue uma hierarquia tática pré-definida:
 6. Atacantes (`ATACANTE`)
 
 ### 2. Prioridade na Exibição por Setor
-- Em cada posição/setor, **jogadores com status `CONTRATADO` (ou `FECHADO` / `CONFIRMADO`) devem aparecer PRIMEIRO**, seguidos pelos demais rumores/especulações.
+- Em cada posição/setor, a ordem dos cards segue `STATUS_DISPLAY_ORDER` em `app.js` (hoje: `CONTRATADO` → `OUTRO CLUBE` → `ESPECULAÇÃO`).
 
 ### 3. Status e Badges
-- **CONTRATADO / FECHADO / CONFIRMADO:** Badge verde (`bg-emerald-100`, `text-emerald-700`).
-- **SONDAGEM / NEGOCIAÇÃO / ESPECULAÇÃO:** Badge amarelo/âmbar (`bg-amber-100`, `text-amber-700`).
-- **DESCARTADO:** Badge vermelho/rosa (`bg-rose-100`, `text-rose-700`).
+- **CONTRATADO:** Badge verde (`bg-emerald-100`, `text-emerald-700`).
+- **ESPECULAÇÃO:** Badge amarelo/âmbar (`bg-amber-100`, `text-amber-700`).
 - **FOI PRA OUTRO CLUBE:** Badge neutro/escuro. Quando houver clube de destino informado (`destinationClub`), exibir o nome do clube que contratou o jogador.
 
 ---
@@ -67,6 +66,4 @@ O modo ao vivo foi desenhado para criadores de conteúdo usarem em transmissões
 ---
 
 ## 🚫 GitHub & Commits — Sem menção ao Cursor
-- **Nunca** adicionar `Co-authored-by: Cursor`, `cursoragent@cursor.com`, nem qualquer trailer/assinatura/crédito ao Cursor Agent (ou similares) em commits, mensagens de commit, PRs, issues ou arquivos do repositório.
-- Commits e PRs devem aparecer **apenas** com a autoria do desenvolvedor do projeto (Guga Alves), sem metadados de agente de IA.
-- Ao criar commits, usar somente a mensagem solicitada — sem trailers extras, sem co-autores automáticos e sem menções a ferramentas de IA.
+- Commits e PRs devem aparecer **apenas** com a autoria do desenvolvedor do projeto (Guga Alves), sem metadados de agente de IA, sem trailers extras, sem co-autores automáticos e sem menções a ferramentas de IA.

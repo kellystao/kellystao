@@ -15,7 +15,26 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
    * Lista de todos os tipos de status possíveis para um jogador especulado.
    * @type {string[]}
    */
-  const ALL_STATUSES = ['ESPECULAÇÃO', 'CONTRATADO', 'OUTRO CLUBE', 'DESCARTADO'];
+  const ALL_STATUSES = ['ESPECULAÇÃO', 'CONTRATADO', 'OUTRO CLUBE'];
+
+  /**
+   * Ordem de exibição dos status dentro de cada setor (índice menor = aparece primeiro).
+   * Status fora desta lista ficam no final.
+   * @type {string[]}
+   */
+  const STATUS_DISPLAY_ORDER = ['CONTRATADO', 'OUTRO CLUBE', 'ESPECULAÇÃO'];
+
+  /**
+   * Retorna o índice de prioridade de um status para ordenação na lista.
+   * @param {string} status
+   * @returns {number}
+   */
+  function getStatusSortIndex(status) {
+    const norm = (status || '').toUpperCase();
+    const mapped = norm === 'FOI PRA OUTRO CLUBE' ? 'OUTRO CLUBE' : norm;
+    const idx = STATUS_DISPLAY_ORDER.indexOf(mapped);
+    return idx === -1 ? STATUS_DISPLAY_ORDER.length : idx;
+  }
   
   /**
    * Estado global reativo da aplicação.
@@ -49,12 +68,12 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
   /**
    * Retorna as configurações de estilo Tailwind e o texto formatado para o selo (badge) de status do jogador.
    * 
-   * @param {string} status - O status atual do jogador (ex: 'CONTRATADO', 'OUTRO CLUBE', 'DESCARTADO', 'ESPECULAÇÃO').
+   * @param {string} status - O status atual do jogador (ex: 'CONTRATADO', 'OUTRO CLUBE', 'ESPECULAÇÃO').
    * @returns {{ bg: string, text: string }} Objeto contendo as classes CSS de estilo e o texto a ser exibido no selo.
    */
   function getStatusBadge(status) {
     const norm = (status || '').toUpperCase();
-    if (norm === 'CONTRATADO' || norm === 'FECHADO' || norm === 'CONFIRMADO') {
+    if (norm === 'CONTRATADO') {
       return {
         bg: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
         text: 'CONTRATADO'
@@ -64,12 +83,6 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
       return {
         bg: 'bg-amber-50 text-amber-700 border-amber-200/80',
         text: 'FOI PRA OUTRO TIME'
-      };
-    }
-    if (norm === 'DESCARTADO') {
-      return {
-        bg: 'bg-rose-50 text-rose-700 border-rose-200/80',
-        text: 'DESCARTADO'
       };
     }
     return {
@@ -91,12 +104,10 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
       
       let itemNormalizedStatus = 'ESPECULAÇÃO';
       const norm = (item.status || '').toUpperCase();
-      if (norm === 'CONTRATADO' || norm === 'FECHADO' || norm === 'CONFIRMADO') {
+      if (norm === 'CONTRATADO') {
         itemNormalizedStatus = 'CONTRATADO';
       } else if (norm === 'FOI PRA OUTRO CLUBE' || norm === 'OUTRO CLUBE') {
         itemNormalizedStatus = 'OUTRO CLUBE';
-      } else if (norm === 'DESCARTADO') {
-        itemNormalizedStatus = 'DESCARTADO';
       }
   
       const matchStatus = state.selectedStatuses.includes(itemNormalizedStatus);
@@ -283,8 +294,8 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
     const isAllSelected = selectedCount === totalStatusCount;
     const isOpen = state.openDropdown === 'status';
   
-    const stTitleMap = { 'ESPECULAÇÃO': 'Especulação', 'CONTRATADO': 'Contratado', 'OUTRO CLUBE': 'Foi pra outro time', 'DESCARTADO': 'Descartado' };
-    const stShortMap = { 'ESPECULAÇÃO': 'Especulação', 'CONTRATADO': 'Contratado', 'OUTRO CLUBE': 'Outro time', 'DESCARTADO': 'Descartado' };
+    const stTitleMap = { 'ESPECULAÇÃO': 'Especulação', 'CONTRATADO': 'Contratado', 'OUTRO CLUBE': 'Foi pra outro time' };
+    const stShortMap = { 'ESPECULAÇÃO': 'Especulação', 'CONTRATADO': 'Contratado', 'OUTRO CLUBE': 'Outro time' };
 
     let buttonLabel = 'Status: Todos';
     let shortLabel = 'Status';
@@ -307,8 +318,7 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
     const statusList = [
       { id: 'ESPECULAÇÃO', title: 'Especulação', badgeClass: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300' },
       { id: 'CONTRATADO', title: 'Contratado', badgeClass: 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300' },
-      { id: 'OUTRO CLUBE', title: 'Foi pra outro time', badgeClass: 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300' },
-      { id: 'DESCARTADO', title: 'Descartado', badgeClass: 'bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300' }
+      { id: 'OUTRO CLUBE', title: 'Foi pra outro time', badgeClass: 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300' }
     ];
   
     let html = `
@@ -339,10 +349,9 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
               const isChecked = state.selectedStatuses.includes(st.id);
               const count = state.items.filter(item => {
                 const norm = (item.status || '').toUpperCase();
-                if (st.id === 'CONTRATADO') return norm === 'CONTRATADO' || norm === 'FECHADO' || norm === 'CONFIRMADO';
+                if (st.id === 'CONTRATADO') return norm === 'CONTRATADO';
                 if (st.id === 'OUTRO CLUBE') return norm === 'FOI PRA OUTRO CLUBE' || norm === 'OUTRO CLUBE';
-                if (st.id === 'DESCARTADO') return norm === 'DESCARTADO';
-                return norm !== 'CONTRATADO' && norm !== 'FECHADO' && norm !== 'CONFIRMADO' && norm !== 'DESCARTADO' && norm !== 'FOI PRA OUTRO CLUBE' && norm !== 'OUTRO CLUBE';
+                return norm !== 'CONTRATADO' && norm !== 'FOI PRA OUTRO CLUBE' && norm !== 'OUTRO CLUBE';
               }).length;
   
               return `
@@ -453,14 +462,8 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
       const groupItems = filteredItems.filter(i => i.position === posId);
       if (groupItems.length === 0) return;
   
-      // Ordena para que jogadores com status CONTRATADO fiquem no topo
-      groupItems.sort((a, b) => {
-        const aNorm = (a.status || '').toUpperCase();
-        const bNorm = (b.status || '').toUpperCase();
-        const aIsContratado = (aNorm === 'CONTRATADO' || aNorm === 'FECHADO' || aNorm === 'CONFIRMADO') ? 1 : 0;
-        const bIsContratado = (bNorm === 'CONTRATADO' || bNorm === 'FECHADO' || bNorm === 'CONFIRMADO') ? 1 : 0;
-        return bIsContratado - aIsContratado;
-      });
+      // Ordena pelo STATUS_DISPLAY_ORDER (ex.: CONTRATADO primeiro)
+      groupItems.sort((a, b) => getStatusSortIndex(a.status) - getStatusSortIndex(b.status));
   
       const posMeta = POSITIONS_ORDER.find(p => p.id === posId) || { title: posId };
   

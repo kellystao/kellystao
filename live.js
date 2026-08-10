@@ -239,17 +239,17 @@ function renderObsStatsBar(items) {
 
   const contratados = items.filter(i => {
     const norm = (i.status || '').toUpperCase();
-    return norm === 'CONTRATADO' || norm === 'FECHADO' || norm === 'CONFIRMADO';
+    return norm === 'CONTRATADO';
   }).length;
 
   const especulacoes = items.filter(i => {
     const norm = (i.status || '').toUpperCase();
-    return norm !== 'CONTRATADO' && norm !== 'FECHADO' && norm !== 'CONFIRMADO' && norm !== 'DESCARTADO' && norm !== 'FOI PRA OUTRO CLUBE' && norm !== 'OUTRO CLUBE';
+    return norm !== 'CONTRATADO' && norm !== 'FOI PRA OUTRO CLUBE' && norm !== 'OUTRO CLUBE';
   }).length;
 
-  const descartados = items.filter(i => {
+  const outroClube = items.filter(i => {
     const norm = (i.status || '').toUpperCase();
-    return norm === 'DESCARTADO' || norm === 'FOI PRA OUTRO CLUBE' || norm === 'OUTRO CLUBE';
+    return norm === 'FOI PRA OUTRO CLUBE' || norm === 'OUTRO CLUBE';
   }).length;
 
   statsContainer.innerHTML = `
@@ -271,7 +271,7 @@ function renderObsStatsBar(items) {
       <div class="w-2.5 h-8 bg-rose-500 rounded-full shrink-0"></div>
       <div>
         <p class="text-[10px] font-bold ${t.muted} uppercase tracking-wider">Fecharam com outro clube</p>
-        <p class="text-xl font-black ${t.numRose} font-mono">${descartados}</p>
+        <p class="text-xl font-black ${t.numRose} font-mono">${outroClube}</p>
       </div>
     </div>
   `;

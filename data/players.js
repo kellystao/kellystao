@@ -23,7 +23,7 @@ window.INITIAL_SPECULATIONS = [
   { id: '10', playerName: 'Breno Bidon', position: 'MEIA', specificPosition: 'VOL', currentClub: 'Corinthians', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
   { id: '11', playerName: 'Marco Antônio', position: 'MEIA', specificPosition: 'VOL', currentClub: 'São Paulo', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
   { id: '12', playerName: 'Yannick Carrasco', position: 'MEIA', specificPosition: 'ME', currentClub: 'Al Shabab', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
-  { id: '13', playerName: 'Gerson', position: 'MEIA', specificPosition: 'MC', currentClub: 'Zenit', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
+  { id: '13', playerName: 'Gerson', position: 'MEIA', specificPosition: 'MC', currentClub: 'Zenit', status: 'OUTRO CLUBE', destinationClub: 'Cruzeiro', source: '', sourceUrl: '' },
   { id: '14', playerName: 'Zé Lucas', position: 'MEIA', specificPosition: 'VOL', currentClub: 'Sport', status: 'OUTRO CLUBE', destinationClub: 'Cruzeiro', source: '', sourceUrl: '' },
   { id: '15', playerName: 'Joel Romero', position: 'MEIA', specificPosition: 'MC', currentClub: 'América de Cáli', status: 'ESPECULAÇÃO', source: 'Coluna Fla', sourceUrl: '' },
   { id: '16', playerName: 'Thiago Almada', position: 'MEIA', specificPosition: 'MA', currentClub: 'Atlético de Madrid', status: 'OUTRO CLUBE', destinationClub: 'River Plate', source: '', sourceUrl: '' },
