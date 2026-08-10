@@ -233,3 +233,61 @@ body.dark #info-backdrop .bg-sky-50 a {
   transform-origin: center bottom;
   display: block;
 }
+
+/* OBS Live — carrossel horizontal do Destaque */
+.obs-carousel-wrap {
+  --obs-carousel-fade: #0f172a; /* slate-900 */
+}
+
+.obs-carousel-wrap--light {
+  --obs-carousel-fade: #ffffff;
+}
+
+.obs-carousel-track {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.55) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.obs-carousel-track::-webkit-scrollbar {
+  height: 5px;
+}
+
+.obs-carousel-track::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.obs-carousel-track::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.45);
+  border-radius: 999px;
+}
+
+.obs-carousel-track::-webkit-scrollbar-thumb:hover {
+  background: rgba(248, 113, 113, 0.7);
+}
+
+.obs-carousel-fade {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2.25rem;
+  z-index: 1;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.obs-carousel-fade--left {
+  left: 0;
+  background: linear-gradient(to right, var(--obs-carousel-fade), transparent);
+}
+
+.obs-carousel-fade--right {
+  right: 0;
+  background: linear-gradient(to left, var(--obs-carousel-fade), transparent);
+}
+
+.obs-carousel-wrap--start .obs-carousel-fade--left,
+.obs-carousel-wrap--end .obs-carousel-fade--right {
+  opacity: 0;
+}

@@ -23,7 +23,12 @@ let obsState = {
   theme: 'dark', // 'dark' | 'light'
   viewMode: 'spotlight', // 'spotlight' | 'table'
   search: '',
-  spotlightIndex: 0
+  spotlightIndex: 0,
+  /** Categorias desativadas (não entram na exibição). Vazio = mostra tudo. */
+  disabledStatuses: [],
+  /** Ordenação da tabela do Modo OBS. */
+  tableSort: { key: 'position', dir: 'asc' },
+  carouselResizeBound: false
 };
 
 /**
@@ -102,25 +107,123 @@ function getObsThemeClasses() {
   };
 }
 
-function openObsModal() {
+/**
+ * Lê o modo Destaque/Tabela da URL (?mode=destaque|tabela|spotlight|table).
+ * @returns {'spotlight'|'table'|null}
+ */
+function parseObsViewModeFromUrl() {
+  const raw = (new URLSearchParams(window.location.search).get('mode') || '').toLowerCase();
+  if (raw === 'table' || raw === 'tabela') return 'table';
+  if (raw === 'spotlight' || raw === 'destaque') return 'spotlight';
+  return null;
+}
+
+/**
+ * Mantém a URL alinhada ao Modo OBS Live (?view=live&mode=destaque|tabela).
+ * @param {boolean} isOpen
+ */
+function syncObsLiveUrl(isOpen) {
+  const url = new URL(window.location.href);
+  if (isOpen) {
+    url.searchParams.set('view', 'live');
+    url.searchParams.set('mode', obsState.viewMode === 'table' ? 'tabela' : 'destaque');
+  } else {
+    url.searchParams.delete('view');
+    url.searchParams.delete('mode');
+  }
+  const next = `${url.pathname}${url.search}${url.hash}`;
+  const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  if (next !== current) {
+    history.replaceState(null, '', next);
+  }
+}
+
+function isObsLiveUrlActive() {
+  const params = new URLSearchParams(window.location.search);
+  return (params.get('view') || '').toLowerCase() === 'live';
+}
+
+function isObsModalOpen() {
+  const modal = document.getElementById('obs-backdrop');
+  return !!(modal && !modal.classList.contains('hidden'));
+}
+
+/**
+ * Abre o Modo OBS Live.
+ * @param {{ fromUrl?: boolean }} [options]
+ */
+function openObsModal(options = {}) {
   const modal = document.getElementById('obs-backdrop');
   if (modal) {
     modal.classList.remove('hidden');
     obsState.spotlightIndex = 0;
     obsState.search = '';
+    obsState.disabledStatuses = [];
+
+    if (options.fromUrl) {
+      const modeFromUrl = parseObsViewModeFromUrl();
+      if (modeFromUrl) obsState.viewMode = modeFromUrl;
+    }
+
     const searchInput = document.getElementById('obs-search');
     if (searchInput) searchInput.value = '';
     applyObsChromeTheme();
+    refreshObsViewModeButtons();
     renderObsLiveContent();
     if (window.lucide) lucide.createIcons();
+    syncObsLiveUrl(true);
   }
+}
+
+/**
+ * Categoria de status usada pelos cards de filtro do Modo OBS.
+ * @param {object} item
+ * @returns {'CONTRATADO'|'ESPECULACAO'|'OUTRO_CLUBE'}
+ */
+function getObsStatusCategory(item) {
+  const norm = (item.status || '').toUpperCase();
+  if (norm === 'CONTRATADO') return 'CONTRATADO';
+  if (norm === 'FOI PRA OUTRO CLUBE' || norm === 'OUTRO CLUBE') return 'OUTRO_CLUBE';
+  return 'ESPECULACAO';
+}
+
+/**
+ * Alterna ativação de uma categoria nos cards de contagem do Modo OBS.
+ * Desativado = card cinza e categoria fora da exibição. Vários podem ficar desativados.
+ * @param {'CONTRATADO'|'ESPECULACAO'|'OUTRO_CLUBE'} category
+ */
+function toggleObsStatusCategory(category) {
+  const idx = obsState.disabledStatuses.indexOf(category);
+  if (idx >= 0) {
+    obsState.disabledStatuses.splice(idx, 1);
+  } else {
+    obsState.disabledStatuses.push(category);
+  }
+  obsState.spotlightIndex = 0;
+  renderObsLiveContent();
 }
 
 function closeObsModal() {
   const modal = document.getElementById('obs-backdrop');
   if (modal) {
     modal.classList.add('hidden');
+    syncObsLiveUrl(false);
   }
+}
+
+/**
+ * Abre o Modo OBS Live se a URL tiver ?view=live (&mode=destaque|tabela).
+ */
+function initObsLiveFromUrl() {
+  if (isObsLiveUrlActive()) {
+    openObsModal({ fromUrl: true });
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initObsLiveFromUrl);
+} else {
+  initObsLiveFromUrl();
 }
 
 /**
@@ -216,10 +319,13 @@ function setObsTheme(theme) {
 }
 
 function setObsViewMode(mode) {
-  obsState.viewMode = mode;
+  obsState.viewMode = mode === 'table' ? 'table' : 'spotlight';
   obsState.spotlightIndex = 0;
   refreshObsViewModeButtons();
   renderObsLiveContent();
+  if (isObsModalOpen()) {
+    syncObsLiveUrl(true);
+  }
 }
 
 function updateObsLiveView() {
@@ -236,45 +342,72 @@ function renderObsStatsBar(items) {
   if (!statsContainer) return;
 
   const t = getObsThemeClasses();
+  const disabledPanel = t.isLight
+    ? 'bg-slate-200 border border-slate-300 shadow-none'
+    : 'bg-slate-800/60 border border-slate-700 shadow-none';
+  const disabledMuted = t.isLight ? 'text-slate-500' : 'text-slate-500';
+  const disabledNum = t.isLight ? 'text-slate-400' : 'text-slate-500';
 
-  const contratados = items.filter(i => {
-    const norm = (i.status || '').toUpperCase();
-    return norm === 'CONTRATADO';
-  }).length;
+  const contratados = items.filter(i => getObsStatusCategory(i) === 'CONTRATADO').length;
+  const especulacoes = items.filter(i => getObsStatusCategory(i) === 'ESPECULACAO').length;
+  const outroClube = items.filter(i => getObsStatusCategory(i) === 'OUTRO_CLUBE').length;
 
-  const especulacoes = items.filter(i => {
-    const norm = (i.status || '').toUpperCase();
-    return norm !== 'CONTRATADO' && norm !== 'FOI PRA OUTRO CLUBE' && norm !== 'OUTRO CLUBE';
-  }).length;
+  const cards = [
+    {
+      id: 'CONTRATADO',
+      label: 'Contratados',
+      count: contratados,
+      bar: 'bg-emerald-500',
+      num: t.numEmerald
+    },
+    {
+      id: 'ESPECULACAO',
+      label: 'Especulações',
+      count: especulacoes,
+      bar: 'bg-amber-500',
+      num: t.numAmber
+    },
+    {
+      id: 'OUTRO_CLUBE',
+      label: 'Fecharam com outro clube',
+      count: outroClube,
+      bar: 'bg-rose-500',
+      num: t.numRose
+    }
+  ];
 
-  const outroClube = items.filter(i => {
-    const norm = (i.status || '').toUpperCase();
-    return norm === 'FOI PRA OUTRO CLUBE' || norm === 'OUTRO CLUBE';
-  }).length;
-
-  statsContainer.innerHTML = `
-    <div class="${t.panel} p-3 rounded-2xl flex items-center gap-3">
-      <div class="w-2.5 h-8 bg-emerald-500 rounded-full shrink-0"></div>
-      <div>
-        <p class="text-[10px] font-bold ${t.muted} uppercase tracking-wider">Contratados</p>
-        <p class="text-xl font-black ${t.numEmerald} font-mono">${contratados}</p>
+  statsContainer.innerHTML = cards.map(card => {
+    const isDisabled = obsState.disabledStatuses.includes(card.id);
+    const isOn = !isDisabled;
+    return `
+      <div class="${isDisabled ? disabledPanel : t.panel} p-3 rounded-2xl flex items-center gap-3 w-full">
+        <div class="w-2.5 h-8 ${isDisabled ? 'bg-slate-400' : card.bar} rounded-full shrink-0"></div>
+        <div class="min-w-0 flex-1">
+          <p class="text-[10px] font-bold ${isDisabled ? disabledMuted : t.muted} uppercase tracking-wider">${card.label}</p>
+          <p class="text-xl font-black ${isDisabled ? disabledNum : card.num} font-mono">${card.count}</p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked="${isOn ? 'true' : 'false'}"
+          aria-label="${isOn ? 'Desativar' : 'Ativar'} ${card.label}"
+          title="${isOn ? 'Desativar categoria' : 'Ativar categoria'}"
+          onclick="toggleObsStatusCategory('${card.id}')"
+          class="shrink-0 inline-flex items-center gap-1.5 rounded-full border px-1.5 py-1 cursor-pointer transition select-none ${
+            isOn
+              ? 'bg-emerald-500/15 border-emerald-500/40'
+              : 'bg-slate-500/15 border-slate-500/40'
+          }">
+          <span class="relative w-9 h-5 rounded-full transition ${isOn ? 'bg-emerald-500' : 'bg-slate-500'}">
+            <span class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${isOn ? 'translate-x-4' : 'translate-x-0'}"></span>
+          </span>
+          <span class="text-[10px] font-black uppercase tracking-wider min-w-[2rem] text-center ${isOn ? (t.isLight ? 'text-emerald-600' : 'text-emerald-400') : 'text-slate-400'}">
+            ${isOn ? 'On' : 'Off'}
+          </span>
+        </button>
       </div>
-    </div>
-    <div class="${t.panel} p-3 rounded-2xl flex items-center gap-3">
-      <div class="w-2.5 h-8 bg-amber-500 rounded-full shrink-0"></div>
-      <div>
-        <p class="text-[10px] font-bold ${t.muted} uppercase tracking-wider">Especulações</p>
-        <p class="text-xl font-black ${t.numAmber} font-mono">${especulacoes}</p>
-      </div>
-    </div>
-    <div class="${t.panel} p-3 rounded-2xl flex items-center gap-3">
-      <div class="w-2.5 h-8 bg-rose-500 rounded-full shrink-0"></div>
-      <div>
-        <p class="text-[10px] font-bold ${t.muted} uppercase tracking-wider">Fecharam com outro clube</p>
-        <p class="text-xl font-black ${t.numRose} font-mono">${outroClube}</p>
-      </div>
-    </div>
-  `;
+    `;
+  }).join('');
 }
 
 // Main Render Function for Live Content
@@ -286,6 +419,9 @@ function renderObsLiveContent() {
   renderObsStatsBar(allItems);
 
   let filtered = allItems;
+  if (obsState.disabledStatuses.length > 0) {
+    filtered = filtered.filter(i => !obsState.disabledStatuses.includes(getObsStatusCategory(i)));
+  }
   if (obsState.search) {
     filtered = filtered.filter(i =>
       i.playerName.toLowerCase().includes(obsState.search) ||
@@ -297,9 +433,19 @@ function renderObsLiveContent() {
 
   if (filtered.length === 0) {
     const t = getObsThemeClasses();
+    let emptyMsg = 'Nenhum jogador encontrado.';
+    if (obsState.disabledStatuses.length === 3) {
+      emptyMsg = 'Todas as categorias estão desativadas. Clique em um card para reativar.';
+    } else if (obsState.search && obsState.disabledStatuses.length > 0) {
+      emptyMsg = `Nenhum jogador encontrado com a busca "${obsState.search}" nas categorias ativas.`;
+    } else if (obsState.search) {
+      emptyMsg = `Nenhum jogador encontrado com a busca "${obsState.search}".`;
+    } else if (obsState.disabledStatuses.length > 0) {
+      emptyMsg = 'Nenhum jogador nas categorias ativas.';
+    }
     container.innerHTML = `
       <div class="text-center py-12 ${t.empty}">
-        <p class="text-base font-bold">Nenhum jogador encontrado com a busca "${obsState.search}".</p>
+        <p class="text-base font-bold">${emptyMsg}</p>
       </div>
     `;
     return;
@@ -336,6 +482,11 @@ function renderObsSpotlightMode(container, filtered) {
   const normStatus = (currentItem.status || '').toUpperCase();
   const isOutroClube = normStatus === 'OUTRO CLUBE' || normStatus === 'FOI PRA OUTRO CLUBE';
   const hasDestination = isOutroClube && currentItem.destinationClub && currentItem.destinationClub.trim();
+  const playerImg = (currentItem.img || '').trim();
+  const hasImg = playerImg.length > 0;
+  const imgFrame = t.isLight
+    ? 'border-slate-200 bg-slate-100'
+    : 'border-slate-700 bg-slate-950';
 
   let html = `
     <div class="space-y-6">
@@ -361,9 +512,20 @@ function renderObsSpotlightMode(container, filtered) {
         </div>
 
         <!-- Center Player Focus Area -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-          <div class="md:col-span-2 space-y-3">
-            <div class="flex items-center gap-2">
+        <div class="grid grid-cols-1 ${hasImg ? 'md:grid-cols-12' : 'md:grid-cols-3'} gap-6 items-center">
+          ${hasImg ? `
+            <div class="md:col-span-2 flex justify-center md:justify-start">
+              <img
+                src="${playerImg}"
+                alt="${currentItem.playerName}"
+                class="w-36 h-48 sm:w-40 sm:h-52 rounded-2xl object-contain border ${imgFrame} shadow-lg"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          ` : ''}
+          <div class="${hasImg ? 'md:col-span-5' : 'md:col-span-2'} space-y-3">
+            <div class="flex items-center gap-2 flex-wrap">
               <span class="px-2.5 py-1 ${t.chip} rounded-lg text-xs font-bold font-mono uppercase">
                 ${currentItem.position} ${(currentItem.specificPosition && currentItem.position !== 'GOLEIRO') ? `(${currentItem.specificPosition})` : ''}
               </span>
@@ -391,7 +553,7 @@ function renderObsSpotlightMode(container, filtered) {
           </div>
 
           <!-- Additional Metadata Box -->
-          <div class="${t.spotlightMeta} p-5 rounded-2xl space-y-3">
+          <div class="${hasImg ? 'md:col-span-5' : ''} ${t.spotlightMeta} p-4 rounded-2xl space-y-3 w-full md:justify-self-end md:max-w-[13.5rem]">
             <div class="space-y-1">
               <span class="text-[10px] uppercase font-bold ${t.muted} font-mono tracking-wider">FONTE DA NOTÍCIA</span>
               <p class="text-sm font-bold ${t.spotlightMetaText}">${currentItem.source || 'Não especificada'}</p>
@@ -410,28 +572,137 @@ function renderObsSpotlightMode(container, filtered) {
       <!-- Quick Player Selector Carousel Strip below -->
       <div class="${t.carousel} p-3 rounded-2xl space-y-2">
         <p class="text-[11px] font-bold ${t.muted} uppercase tracking-wider font-mono px-1">Selecione para destacar ao vivo:</p>
-        <div class="flex items-center gap-2 overflow-x-auto pb-1">
-          ${filtered.map((item, idx) => {
-            const isSelected = idx === obsState.spotlightIndex;
-            return `
-              <button
-                onclick="spotlightSelect(${idx})"
-                class="px-3 py-2 rounded-xl text-xs font-bold transition border shrink-0 text-left flex items-center gap-2 cursor-pointer ${
-                  isSelected
-                    ? 'bg-red-600 text-white border-red-500 shadow-md'
-                    : t.carouselBtn
-                }">
-                <span>${item.playerName}</span>
-                <span class="text-[10px] opacity-75 font-mono">(${item.position})</span>
-              </button>
-            `;
-          }).join('')}
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            id="obs-carousel-prev"
+            onclick="scrollObsCarousel(-1)"
+            class="p-2 ${t.navBtn} rounded-xl transition shrink-0 flex items-center justify-center cursor-pointer"
+            aria-label="Rolar lista para a esquerda"
+            title="Anteriores">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+          </button>
+
+          <div
+            id="obs-carousel-wrap"
+            class="obs-carousel-wrap relative flex-1 min-w-0 ${t.isLight ? 'obs-carousel-wrap--light' : 'obs-carousel-wrap--dark'}">
+            <div
+              id="obs-carousel-track"
+              class="obs-carousel-track flex items-center gap-2 overflow-x-auto scroll-smooth snap-x snap-mandatory py-1 px-1">
+              ${filtered.map((item, idx) => {
+                const isSelected = idx === obsState.spotlightIndex;
+                return `
+                  <button
+                    type="button"
+                    onclick="spotlightSelect(${idx})"
+                    data-obs-spotlight-selected="${isSelected ? 'true' : 'false'}"
+                    class="obs-carousel-chip px-3 py-2 rounded-xl text-xs font-bold transition border shrink-0 snap-start text-left flex items-center gap-2 cursor-pointer ${
+                      isSelected
+                        ? 'bg-red-600 text-white border-red-500 shadow-md'
+                        : t.carouselBtn
+                    }">
+                    <span>${item.playerName}</span>
+                    <span class="text-[10px] opacity-75 font-mono">(${item.position})</span>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+            <div class="obs-carousel-fade obs-carousel-fade--left" aria-hidden="true"></div>
+            <div class="obs-carousel-fade obs-carousel-fade--right" aria-hidden="true"></div>
+          </div>
+
+          <button
+            type="button"
+            id="obs-carousel-next"
+            onclick="scrollObsCarousel(1)"
+            class="p-2 ${t.navBtn} rounded-xl transition shrink-0 flex items-center justify-center cursor-pointer"
+            aria-label="Rolar lista para a direita"
+            title="Próximos">
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+          </button>
         </div>
       </div>
     </div>
   `;
 
   container.innerHTML = html;
+  requestAnimationFrame(() => {
+    initObsCarouselUX();
+  });
+}
+
+/**
+ * Rola a faixa de jogadores do Destaque.
+ * @param {number} direction -1 esquerda | 1 direita
+ */
+function scrollObsCarousel(direction) {
+  const track = document.getElementById('obs-carousel-track');
+  if (!track) return;
+  const step = Math.max(240, Math.round(track.clientWidth * 0.6));
+  track.scrollBy({ left: direction * step, behavior: 'smooth' });
+}
+
+/**
+ * Centraliza o chip do jogador em destaque na faixa horizontal.
+ * @param {boolean} [smooth=true]
+ */
+function scrollObsCarouselToSelected(smooth = true) {
+  const track = document.getElementById('obs-carousel-track');
+  const selected = track?.querySelector('[data-obs-spotlight-selected="true"]');
+  if (!track || !selected) return;
+  selected.scrollIntoView({
+    inline: 'center',
+    block: 'nearest',
+    behavior: smooth ? 'smooth' : 'auto'
+  });
+}
+
+/**
+ * Atualiza fades e estado das setas conforme a posição do scroll.
+ */
+function updateObsCarouselChrome() {
+  const track = document.getElementById('obs-carousel-track');
+  const wrap = document.getElementById('obs-carousel-wrap');
+  const prev = document.getElementById('obs-carousel-prev');
+  const next = document.getElementById('obs-carousel-next');
+  if (!track || !wrap) return;
+
+  const maxScroll = track.scrollWidth - track.clientWidth;
+  const canScroll = maxScroll > 4;
+  const atStart = track.scrollLeft <= 2;
+  const atEnd = track.scrollLeft >= maxScroll - 2;
+
+  wrap.classList.toggle('obs-carousel-wrap--start', atStart || !canScroll);
+  wrap.classList.toggle('obs-carousel-wrap--end', atEnd || !canScroll);
+
+  if (prev) {
+    prev.disabled = !canScroll || atStart;
+    prev.classList.toggle('opacity-30', prev.disabled);
+    prev.classList.toggle('pointer-events-none', prev.disabled);
+  }
+  if (next) {
+    next.disabled = !canScroll || atEnd;
+    next.classList.toggle('opacity-30', next.disabled);
+    next.classList.toggle('pointer-events-none', next.disabled);
+  }
+}
+
+/**
+ * Liga listeners e posiciona a faixa após renderizar o Destaque.
+ */
+function initObsCarouselUX() {
+  const track = document.getElementById('obs-carousel-track');
+  if (!track) return;
+
+  track.addEventListener('scroll', updateObsCarouselChrome, { passive: true });
+
+  if (!obsState.carouselResizeBound) {
+    obsState.carouselResizeBound = true;
+    window.addEventListener('resize', updateObsCarouselChrome);
+  }
+
+  scrollObsCarouselToSelected(false);
+  requestAnimationFrame(updateObsCarouselChrome);
 }
 
 function spotlightNext() {
@@ -452,8 +723,110 @@ function spotlightSelect(index) {
 // ---------------------------------------------------
 // 4. RESUMO EXECUTIVO / TABELA MODE (TABLE)
 // ---------------------------------------------------
+
+/**
+ * Índice da posição conforme POSITIONS_ORDER (app.js).
+ * @param {string} position
+ * @returns {number}
+ */
+function getObsPositionSortIndex(position) {
+  const order = window.POSITIONS_ORDER || [];
+  const idx = order.findIndex(p => p.id === (position || '').toUpperCase());
+  return idx === -1 ? order.length : idx;
+}
+
+/**
+ * Valor textual da coluna Destino / Fonte para ordenação alfabética.
+ * @param {object} item
+ * @returns {string}
+ */
+function getObsDestFonteSortValue(item) {
+  const normStatus = (item.status || '').toUpperCase();
+  const isOutroClube = normStatus === 'OUTRO CLUBE' || normStatus === 'FOI PRA OUTRO CLUBE';
+  if (isOutroClube && item.destinationClub && item.destinationClub.trim()) {
+    return `Contratado por: ${item.destinationClub}`.trim();
+  }
+  return (item.source || '-').trim();
+}
+
+/**
+ * Alterna a ordenação da tabela do Modo OBS ao clicar no título da coluna.
+ * @param {'position'|'player'|'club'|'status'|'dest'} key
+ */
+function setObsTableSort(key) {
+  if (obsState.tableSort.key === key) {
+    obsState.tableSort.dir = obsState.tableSort.dir === 'asc' ? 'desc' : 'asc';
+  } else {
+    obsState.tableSort.key = key;
+    obsState.tableSort.dir = 'asc';
+  }
+  renderObsLiveContent();
+}
+
+/**
+ * Ordena a lista da tabela: posição por POSITIONS_ORDER; demais colunas A–Z.
+ * @param {Array} items
+ * @returns {Array}
+ */
+function sortObsTableItems(items) {
+  const { key, dir } = obsState.tableSort;
+  const mult = dir === 'asc' ? 1 : -1;
+
+  return [...items].sort((a, b) => {
+    let cmp = 0;
+
+    if (key === 'position') {
+      cmp = getObsPositionSortIndex(a.position) - getObsPositionSortIndex(b.position);
+      if (cmp === 0) {
+        cmp = (a.playerName || '').localeCompare(b.playerName || '', 'pt-BR', { sensitivity: 'base' });
+      }
+    } else if (key === 'player') {
+      cmp = (a.playerName || '').localeCompare(b.playerName || '', 'pt-BR', { sensitivity: 'base' });
+    } else if (key === 'club') {
+      cmp = (a.currentClub || '').localeCompare(b.currentClub || '', 'pt-BR', { sensitivity: 'base' });
+    } else if (key === 'status') {
+      const sa = window.getStatusBadge ? window.getStatusBadge(a.status).text : (a.status || '');
+      const sb = window.getStatusBadge ? window.getStatusBadge(b.status).text : (b.status || '');
+      cmp = sa.localeCompare(sb, 'pt-BR', { sensitivity: 'base' });
+    } else if (key === 'dest') {
+      cmp = getObsDestFonteSortValue(a).localeCompare(getObsDestFonteSortValue(b), 'pt-BR', { sensitivity: 'base' });
+    }
+
+    return cmp * mult;
+  });
+}
+
+/**
+ * Cabeçalho clicável da tabela OBS com indicador de ordenação.
+ * @param {string} key
+ * @param {string} label
+ * @param {object} t
+ * @returns {string}
+ */
+function renderObsTableSortHeader(key, label, t) {
+  const isActive = obsState.tableSort.key === key;
+  const ariaSort = !isActive ? 'none' : (obsState.tableSort.dir === 'asc' ? 'ascending' : 'descending');
+  const icon = !isActive
+    ? 'chevrons-up-down'
+    : (obsState.tableSort.dir === 'asc' ? 'chevron-up' : 'chevron-down');
+
+  return `
+    <th class="py-3 px-4" aria-sort="${ariaSort}">
+      <button
+        type="button"
+        onclick="setObsTableSort('${key}')"
+        class="inline-flex items-center gap-1.5 font-mono uppercase tracking-wider cursor-pointer transition hover:text-red-500 ${isActive ? t.title : ''}"
+        title="Ordenar por ${label}">
+        <span>${label}</span>
+        <i data-lucide="${icon}" class="w-3.5 h-3.5 ${isActive ? 'text-red-500' : 'opacity-50'}"></i>
+      </button>
+    </th>
+  `;
+}
+
 function renderObsTableMode(container, filtered) {
   const t = getObsThemeClasses();
+  const sorted = sortObsTableItems(filtered);
 
   let html = `
     <div class="${t.tableWrap} rounded-2xl shadow-2xl overflow-hidden">
@@ -462,22 +835,22 @@ function renderObsTableMode(container, filtered) {
           <i data-lucide="list" class="w-4 h-4 text-red-500"></i>
           <h3 class="text-sm font-black ${t.title} font-mono uppercase tracking-wider">RESUMO GERAL DAS ESPECULAÇÕES</h3>
         </div>
-        <span class="text-xs font-mono ${t.muted}">${filtered.length} JOGADORES</span>
+        <span class="text-xs font-mono ${t.muted}">${sorted.length} JOGADORES</span>
       </div>
 
       <div class="overflow-x-auto">
         <table class="w-full text-left text-xs ${t.tableText}">
           <thead class="${t.thead} font-mono text-[10px] uppercase tracking-wider">
             <tr>
-              <th class="py-3 px-4">Posição</th>
-              <th class="py-3 px-4">Jogador</th>
-              <th class="py-3 px-4">Clube Atual</th>
-              <th class="py-3 px-4">Status</th>
-              <th class="py-3 px-4">Destino / Fonte</th>
+              ${renderObsTableSortHeader('position', 'Posição', t)}
+              ${renderObsTableSortHeader('player', 'Jogador', t)}
+              ${renderObsTableSortHeader('club', 'Clube Atual', t)}
+              ${renderObsTableSortHeader('status', 'Status', t)}
+              ${renderObsTableSortHeader('dest', 'Destino / Fonte', t)}
             </tr>
           </thead>
           <tbody class="divide-y ${t.tableDivide} font-medium">
-            ${filtered.map((item, idx) => {
+            ${sorted.map((item, idx) => {
               const badge = window.getStatusBadge ? window.getStatusBadge(item.status) : { bg: 'bg-slate-700 text-slate-200 border-slate-600', text: item.status };
               const normStatus = (item.status || '').toUpperCase();
               const isOutroClube = normStatus === 'OUTRO CLUBE' || normStatus === 'FOI PRA OUTRO CLUBE';
@@ -501,7 +874,7 @@ function renderObsTableMode(container, filtered) {
                     </span>
                   </td>
                   <td class="py-3 px-4 ${t.muted} text-[11px]">
-                    ${hasDestination ? `<strong class="${t.strongAmber}">Contratado por: ${item.destinationClub}</strong>` : (item.source || '-')}
+                    ${hasDestination ? `Contratado por: ${item.destinationClub}` : (item.source || '-')}
                   </td>
                 </tr>
               `;

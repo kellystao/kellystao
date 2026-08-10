@@ -488,25 +488,48 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
               const linkUrl = (item.sourceUrl || item.url || '').trim();
               const hasUrl = linkUrl.length > 0;
   
+              const playerImg = (item.img || '').trim();
+              const hasImg = playerImg.length > 0;
+              const showPosBadge = !!(item.specificPosition && item.position !== 'GOLEIRO');
+              const posBadgeHtml = showPosBadge ? `
+                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase font-mono bg-slate-100 text-slate-700 border border-slate-200 shadow-sm" title="Posição Específica">
+                  ${item.specificPosition}
+                </span>
+              ` : '';
+
               return `
                 <div class="clean-card group relative flex flex-col justify-between">
                   <div>
-                    <!-- Linha Superior: Nome do Jogador + Posição Específica + Selo de Status -->
+                    <!-- Linha Superior: Foto (+ posição sobreposta) + Nome + Selo de Status -->
                     <div class="flex items-start justify-between gap-3">
-                      <div>
-                        <div class="flex items-center gap-2 flex-wrap">
-                          <h3 class="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">
-                            ${item.playerName}
-                          </h3>
-                          ${(item.specificPosition && item.position !== 'GOLEIRO') ? `
-                            <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase font-mono bg-slate-100 text-slate-700 border border-slate-200" title="Posição Específica">
-                              ${item.specificPosition}
-                            </span>
-                          ` : ''}
+                      <div class="flex items-start gap-3 min-w-0">
+                        ${hasImg ? `
+                          <div class="relative shrink-0 ${showPosBadge ? 'mb-2.5' : ''}">
+                            <img
+                              src="${playerImg}"
+                              alt="${item.playerName}"
+                              class="w-15 h-18 sm:w-15 sm:h-20 rounded-xl object-contain border border-slate-200 bg-slate-100 block"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                            ${showPosBadge ? `
+                              <span class="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-1/2 z-10">
+                                ${posBadgeHtml}
+                              </span>
+                            ` : ''}
+                          </div>
+                        ` : ''}
+                        <div class="min-w-0">
+                          <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">
+                              ${item.playerName}
+                            </h3>
+                            ${!hasImg ? posBadgeHtml : ''}
+                          </div>
+                          <p class="text-xs font-medium text-slate-500 mt-0.5">
+                            Clube: ${item.currentClub || 'Sem clube'}
+                          </p>
                         </div>
-                        <p class="text-xs font-medium text-slate-500 mt-0.5">
-                          Clube: ${item.currentClub || 'Sem clube'}
-                        </p>
                       </div>
   
                       <div class="shrink-0">

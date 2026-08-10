@@ -53,7 +53,7 @@ O modo ao vivo foi desenhado para criadores de conteúdo usarem em transmissões
 ## 📂 Arquitetura & Organização de Arquivos
 
 - `index.html`: Estrutura principal do HTML, cabeçalho, contêiner de filtros, lista principal e modais (`Mais Informações` e `Modo OBS Live`).
-- `data/players.js`: Lista de jogadores/especulações (`window.INITIAL_SPECULATIONS`). Editar este arquivo para atualizar o mercado.
+- `data/players.js`: Lista de jogadores/especulações (`window.INITIAL_SPECULATIONS`). Editar este arquivo para atualizar o mercado. Campo opcional `img` aponta para foto em `img/` (ex: `img/andrew.webp`).
 - `app.js`: Lógica principal da aplicação web (estado global, manipulação de filtros, ordenação de jogadores, renderização principal).
 - `live.js`: Script dedicado exclusivamente ao Modo OBS Live e ao Modal de Informações para manter o `app.js` limpo.
 
