@@ -60,7 +60,7 @@ O modo ao vivo foi desenhado para criadores de conteúdo usarem em transmissões
 ### Cache (GitHub Pages)
 - O GitHub Pages **não** oferece limpeza manual de cache (CDN Fastly com `max-age≈600`).
 - Em todo deploy, o workflow `.github/workflows/deploy-pages.yml` aplica cache-bust (`?v=<sha>`) em CSS/JS referenciados no `index.html`.
-- Ao commitar mudanças em `data/players.js`, CSS ou JS, garantir push + deploy; se o HTML versionado local existir (`?v=...`), atualizar o sufixo junto da alteração de dados para forçar reload imediato nos browsers.
+- Ao commitar mudanças em qualquer CSS ou JS, garantir push + deploy; se o HTML versionado local existir (`?v=...`), atualizar o sufixo junto da alteração de dados para forçar reload imediato nos browsers.
 
 ---
 

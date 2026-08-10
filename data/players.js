@@ -14,7 +14,7 @@ window.INITIAL_SPECULATIONS = [
   // LATERAIS
   { id: '6', playerName: 'Caio Henrique', position: 'LATERAL', specificPosition: 'LE', currentClub: 'Mônaco', status: 'ESPECULAÇÃO', source: 'Coluna Fla', sourceUrl: '' },
   { id: '7', playerName: 'Wellington', position: 'LATERAL', specificPosition: 'LE', currentClub: 'Southampton', status: 'ESPECULAÇÃO', source: 'UOL', sourceUrl: '' },
-  { id: '54', playerName: 'Kaiki Brruno', position: 'LATERAL', specificPosition: 'LE', currentClub: 'Cruzeiro', status: 'OUTRO CLUBE', destinationClub: 'Como', source: '', sourceUrl: '' },
+  { id: '54', playerName: 'Kaiki Bruno', position: 'LATERAL', specificPosition: 'LE', currentClub: 'Cruzeiro', status: 'OUTRO CLUBE', destinationClub: 'Como', source: '', sourceUrl: '' },
   { id: '55', playerName: 'Abner Vinicius', position: 'LATERAL', specificPosition: 'LE', currentClub: 'Lyon', status: 'ESPECULAÇÃO', source: '@Oliveira32Pablo', sourceUrl: 'https://x.com/Oliveira32Pablo/status/2061764102502936985?s=20' },
 
   // MEIO CAMPO
@@ -63,8 +63,8 @@ window.INITIAL_SPECULATIONS = [
   { id: '45', playerName: 'Igor Jesus', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Nottingham', status: 'ESPECULAÇÃO', source: 'Júlio Miguel Neto', sourceUrl: '' },
   { id: '46', playerName: 'David Romero', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Tigres', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
   { id: '47', playerName: 'Diego Reyes', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'América México (sub-20)', status: 'CONTRATADO', source: 'Gazeta do Urubu', sourceUrl: '' },
-  { id: '48', playerName: 'Mikey Johnstonkey', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'West Bromwich Albion', status: 'ESPECULAÇÃO', source: 'Paparazzo Rubro Negro', sourceUrl: '' },
-  { id: '49', playerName: 'Romelu Calleri', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'São Paulo', status: 'ESPECULAÇÃO', source: 'ESPN', sourceUrl: '' },
+  { id: '48', playerName: 'Mikey Johnston', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'West Bromwich Albion', status: 'ESPECULAÇÃO', source: 'Paparazzo Rubro Negro', sourceUrl: '' },
+  { id: '49', playerName: 'Jonathan Calleri', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'São Paulo', status: 'ESPECULAÇÃO', source: 'ESPN', sourceUrl: '' },
   { id: '50', playerName: 'Robinho Júnior', position: 'ATACANTE', specificPosition: 'PE', currentClub: 'Santos', status: 'ESPECULAÇÃO', source: 'ESPN', sourceUrl: '' },
   { id: '51', playerName: 'Romelu Lukaku', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Napoli', status: 'ESPECULAÇÃO', source: 'Aupseven', sourceUrl: '' },
   { id: '52', playerName: 'Kevin Viveros', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Athletico Paranaense', status: 'ESPECULAÇÃO', source: 'GE', sourceUrl: '' },
