@@ -1,0 +1,188 @@
+/* Clean, Minimalist Style inspired by screenshot */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Minimal Card Design */
+.clean-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.clean-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+  transform: translateY(-2px);
+}
+
+/* Section Rule Line */
+.section-title-line {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.section-title-line::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: #e2e8f0;
+}
+
+/* Modal Animation */
+.modal-backdrop {
+  backdrop-filter: blur(6px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.15s ease-out forwards;
+}
+
+/* Main Site Dark Mode Styles */
+body.dark {
+  background-color: #090d16;
+  color: #f1f5f9;
+}
+
+body.dark header {
+  background-color: rgba(15, 23, 42, 0.95);
+  border-color: #1e293b;
+}
+
+body.dark header h1,
+body.dark header .text-slate-900 {
+  color: #f8fafc !important;
+}
+
+body.dark header p,
+body.dark header .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+body.dark header button:not(#site-theme-toggle) {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+body.dark header button:not(#site-theme-toggle):hover {
+  background-color: #334155;
+}
+
+body.dark .clean-card {
+  background-color: #0f172a;
+  border-color: #1e293b;
+  color: #f8fafc;
+}
+
+body.dark .clean-card:hover {
+  border-color: #334155;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+}
+
+body.dark .clean-card p.text-slate-500,
+body.dark .clean-card span.text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+body.dark .section-title-line h2 {
+  color: #f8fafc;
+}
+
+body.dark .section-title-line span {
+  background-color: #1e293b;
+  color: #cbd5e1;
+}
+
+body.dark .section-title-line::after {
+  background-color: #1e293b;
+}
+
+body.dark footer {
+  background-color: rgba(15, 23, 42, 0.7);
+  border-color: #1e293b;
+  color: #94a3b8;
+}
+
+body.dark footer strong {
+  color: #f1f5f9;
+}
+
+body.dark #info-backdrop > div {
+  background-color: #0f172a;
+  border-color: #1e293b;
+  color: #e2e8f0;
+}
+
+body.dark #info-backdrop h3,
+body.dark #info-backdrop strong {
+  color: #ffffff;
+}
+
+body.dark #info-backdrop p,
+body.dark #info-backdrop li {
+  color: #cbd5e1;
+}
+
+body.dark #info-backdrop .bg-slate-50 {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+body.dark #info-backdrop .bg-amber-50 {
+  background-color: #2e1d0d;
+  border-color: #78350f;
+  color: #fef3c7;
+}
+
+body.dark #info-backdrop .bg-amber-50 strong {
+  color: #fef3c7;
+}
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-ticker {
+  display: flex;
+  width: max-content;
+  animation: ticker 40s linear infinite;
+}
+
+.animate-ticker:hover {
+  animation-play-state: paused;
+}

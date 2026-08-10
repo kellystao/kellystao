@@ -1,0 +1,71 @@
+## 📌 Contexto & Propósito
+O **Kellystão** é um aplicativo web interativo para acompanhamento centralizado de rumores, negociações, sondagens e confirmações do mercado da bola referentes ao elenco do **Flamengo**.
+Ele serve torcedores, criadores de conteúdo (lives no YouTube/Twitch) e imprensa esportiva.
+
+---
+
+## 🎨 Identidade Visual & UI
+- **Framework de Estilo:** Tailwind CSS + Lucide Icons.
+- **Esquema de Cores:**
+  - Base Neutra Clara (`slate-50` / `slate-100` / `white`) na interface principal.
+  - Detalhes do Flamengo em **Vermelho** (`red-600` / `red-700`) e Preto/Chumbo (`slate-900`).
+- **Dropdowns de Filtro:**
+  - Ao clicar no botão do dropdown, deve-se usar `event.stopPropagation()` para impedir que cliques internos fechem o menu imediatamente.
+  - Deve fechar ao clicar fora.
+
+---
+
+## ⚽ Regras de Negócio de Jogadores & Ordenação
+
+### 1. Posições Ordenadas
+A lista de jogadores segue uma hierarquia tática pré-definida:
+1. Goleiros (`GOLEIRO`)
+2. Laterais (`LATERAL`)
+3. Zagueiros (`ZAGUEIRO`)
+4. Volantes (`VOLANTE`)
+5. Meias (`MEIA`)
+6. Atacantes (`ATACANTE`)
+
+### 2. Prioridade na Exibição por Setor
+- Em cada posição/setor, **jogadores com status `CONTRATADO` (ou `FECHADO` / `CONFIRMADO`) devem aparecer PRIMEIRO**, seguidos pelos demais rumores/especulações.
+
+### 3. Status e Badges
+- **CONTRATADO / FECHADO / CONFIRMADO:** Badge verde (`bg-emerald-100`, `text-emerald-700`).
+- **SONDAGEM / NEGOCIAÇÃO / ESPECULAÇÃO:** Badge amarelo/âmbar (`bg-amber-100`, `text-amber-700`).
+- **DESCARTADO:** Badge vermelho/rosa (`bg-rose-100`, `text-rose-700`).
+- **FOI PRA OUTRO CLUBE:** Badge neutro/escuro. Quando houver clube de destino informado (`destinationClub`), exibir o nome do clube que contratou o jogador.
+
+---
+
+## 📺 Modo Transmissão (OBS Live)
+
+O modo ao vivo foi desenhado para criadores de conteúdo usarem em transmissões OBS/YouTube.
+
+### Módulos do Modo Live:
+1. **Destaque (Spotlight):** Card grande em foco para analisar um jogador específico, com carrossel rápido para alternar entre os nomes.
+2. **Resumo Geral (Table):** Tabela executiva e limpa listando todos os nomes, posições, clubes e fontes.
+
+### Recursos de Estúdio:
+- **Fundo Escuro Studio (`bg-slate-950`)** vs **Fundo Claro Studio (`bg-slate-100`)**.
+- Busca rápida ao vivo no topo para filtrar nomes sem sair do overlay.
+
+---
+
+## 📂 Arquitetura & Organização de Arquivos
+
+- `index.html`: Estrutura principal do HTML, cabeçalho, contêiner de filtros, lista principal e modais (`Mais Informações` e `Modo OBS Live`).
+- `app.js`: Lógica principal da aplicação web (estado global, manipulação de filtros, ordenação de jogadores, renderização principal).
+- `live.js`: Script dedicado exclusivamente ao Modo OBS Live e ao Modal de Informações para manter o `app.js` limpo.
+
+---
+
+## 📜 Créditos & Direitos
+- **Ideia Original da Lista:** Kellyson Aguilar
+- **Desenvolvimento & Criação do Site:** Guga Alves
+
+---
+
+## 🚫 GitHub & Commits — Sem menção ao Cursor
+- **Nunca** adicionar `Co-authored-by: Cursor`, `cursoragent@cursor.com`, nem qualquer trailer/assinatura/crédito ao Cursor Agent (ou similares) em commits, mensagens de commit, PRs, issues ou arquivos do repositório.
+- Commits e PRs devem aparecer **apenas** com a autoria do desenvolvedor do projeto (Guga Alves), sem metadados de agente de IA.
+- Ao criar commits, usar somente a mensagem solicitada — sem trailers extras, sem co-autores automáticos e sem menções a ferramentas de IA.
