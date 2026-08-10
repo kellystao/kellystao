@@ -145,8 +145,13 @@ body.dark footer {
   color: #94a3b8;
 }
 
-body.dark footer strong {
+body.dark footer strong,
+body.dark footer a {
   color: #f1f5f9;
+}
+
+body.dark footer a:hover {
+  color: #f87171;
 }
 
 body.dark #info-backdrop > div {
@@ -179,6 +184,17 @@ body.dark #info-backdrop .bg-amber-50 {
 
 body.dark #info-backdrop .bg-amber-50 strong {
   color: #fef3c7;
+}
+
+body.dark #info-backdrop .bg-sky-50 {
+  background-color: #0c1a2e;
+  border-color: #075985;
+  color: #e0f2fe;
+}
+
+body.dark #info-backdrop .bg-sky-50 strong,
+body.dark #info-backdrop .bg-sky-50 a {
+  color: #7dd3fc;
 }
 
 @keyframes ticker {

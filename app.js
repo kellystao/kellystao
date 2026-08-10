@@ -63,7 +63,8 @@ const INITIAL_SPECULATIONS = [
     { id: '49', playerName: 'Romelu Calleri', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'São Paulo', status: 'ESPECULAÇÃO', source: 'ESPN', sourceUrl: '' },
     { id: '50', playerName: 'Robinho Júnior', position: 'ATACANTE', specificPosition: 'PE', currentClub: 'Santos', status: 'ESPECULAÇÃO', source: 'ESPN', sourceUrl: '' },
     { id: '51', playerName: 'Romelu Lukaku', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Napoli', status: 'ESPECULAÇÃO', source: 'Aupseven', sourceUrl: '' },
-    { id: '52', playerName: 'Kevin Viveros', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Athletico Paranaense', status: 'ESPECULAÇÃO', source: 'GE', sourceUrl: '' }
+    { id: '52', playerName: 'Kevin Viveros', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Athletico Paranaense', status: 'ESPECULAÇÃO', source: 'GE', sourceUrl: '' },
+    { id: '53', playerName: 'Tiziano Perrota', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Banfield', status: 'ESPECULAÇÃO', source: 'Mauro Cesar Pereira', sourceUrl: 'https://x.com/maurocezar/status/2086508154872049702?s=20' }
   ];
   
   /**
