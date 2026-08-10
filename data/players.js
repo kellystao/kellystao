@@ -3,10 +3,10 @@
 
 window.INITIAL_SPECULATIONS = [
   // GOLEIROS
-  { id: '1', playerName: 'Gabriel Brasão', position: 'GOLEIRO', specificPosition: '', currentClub: 'Santos', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
+  { id: '1', playerName: 'Gabriel Brazão', position: 'GOLEIRO', specificPosition: '', currentClub: 'Santos', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
   { id: '2', playerName: 'Pedro Morisco', position: 'GOLEIRO', specificPosition: '', currentClub: 'Coritiba', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
   { id: '3', playerName: 'Andrew', position: 'GOLEIRO', specificPosition: '', currentClub: 'Gil Vicente', status: 'CONTRATADO', source: '', sourceUrl: '' },
-  { id: '4', playerName: 'Micael', position: 'GOLEIRO', specificPosition: '', currentClub: 'Athletico Paranaense', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
+  { id: '4', playerName: 'Mycael', position: 'GOLEIRO', specificPosition: '', currentClub: 'Athletico Paranaense', status: 'ESPECULAÇÃO', source: 'Coluna do Fla', sourceUrl: 'https://www.instagram.com/reel/DTOx_TnAt3p/' },
 
   // ZAGUEIROS
   { id: '5', playerName: 'Vitão', position: 'ZAGUEIRO', specificPosition: 'ZD', currentClub: 'Internacional', status: 'CONTRATADO', source: '', sourceUrl: '' },
@@ -68,5 +68,6 @@ window.INITIAL_SPECULATIONS = [
   { id: '50', playerName: 'Robinho Júnior', position: 'ATACANTE', specificPosition: 'PE', currentClub: 'Santos', status: 'ESPECULAÇÃO', source: 'ESPN', sourceUrl: '' },
   { id: '51', playerName: 'Romelu Lukaku', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Napoli', status: 'ESPECULAÇÃO', source: 'Aupseven', sourceUrl: '' },
   { id: '52', playerName: 'Kevin Viveros', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Athletico Paranaense', status: 'ESPECULAÇÃO', source: 'GE', sourceUrl: '' },
-  { id: '53', playerName: 'Tiziano Perrota', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Banfield', status: 'ESPECULAÇÃO', source: 'Mauro Cesar Pereira', sourceUrl: 'https://x.com/maurocezar/status/2086508154872049702?s=20' }
+  { id: '53', playerName: 'Tiziano Perrota', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Banfield', status: 'ESPECULAÇÃO', source: 'Mauro Cesar Pereira', sourceUrl: 'https://x.com/maurocezar/status/2086508154872049702?s=20' },
+  { id: '57', playerName: 'Memphis Depay', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Corinthians', status: 'ESPECULAÇÃO', source: 'ESPN Holanda', sourceUrl: '' }
 ];
