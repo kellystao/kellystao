@@ -107,6 +107,21 @@ body.dark header .header-action-btn:hover {
   background-color: #334155;
 }
 
+body.dark header .header-action-btn .text-red-600,
+body.dark header .live-mode-btn .text-red-600 {
+  color: #dc2626 !important;
+}
+
+body.dark header .live-mode-btn {
+  background-color: #ffffff;
+  border-color: #dc2626;
+  color: #334155;
+}
+
+body.dark header .live-mode-btn:hover {
+  background-color: #fef2f2;
+}
+
 body.dark header .filter-dropdown-panel {
   background-color: #0f172a;
   border-color: #1e293b;
