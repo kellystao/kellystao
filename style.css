@@ -112,6 +112,15 @@ body.dark .clean-card:hover {
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
 }
 
+body.dark .clean-card .text-slate-900,
+body.dark .clean-card h3 {
+  color: #f8fafc;
+}
+
+body.dark .clean-card:hover h3 {
+  color: #dc2626;
+}
+
 body.dark .clean-card p.text-slate-500,
 body.dark .clean-card span.text-slate-500 {
   color: #94a3b8 !important;

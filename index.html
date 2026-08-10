@@ -4,14 +4,81 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="index, follow" />
+  <meta name="author" content="Guga Alves, Kelyson Aguilar" />
+  <link rel="canonical" href="https://kellystao.github.io/kellystao/" />
   <title>Kellystão - Mercado do Flamengo</title>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YGR75C71HC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-YGR75C71HC');
+  </script>
 
   <!-- Open Graph Protocol / Facebook & Social Media -->
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kellystao.github.io/kellystao/" />
   <meta property="og:title" content="Kellystão - Mercado do Flamengo" />
   <meta property="og:description" content="Painel interativo para acompanhamento de rumores, contratações e especulações do Mercado da Bola do Flamengo." />
   <meta property="og:site_name" content="Kellystão" />
   <meta property="og:locale" content="pt_BR" />
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://kellystao.github.io/kellystao/#app",
+        "name": "Kellystão",
+        "alternateName": "Kellystão - Mercado do Flamengo",
+        "url": "https://kellystao.github.io/kellystao/",
+        "description": "Painel interativo para acompanhamento de rumores, contratações e especulações do Mercado da Bola do Flamengo.",
+        "applicationCategory": "SportsApplication",
+        "operatingSystem": "Any",
+        "inLanguage": "pt-BR",
+        "browserRequirements": "Requires JavaScript",
+        "isAccessibleForFree": true,
+        "creator": [
+          { "@type": "Person", "name": "Guga Alves" },
+          { "@type": "Person", "name": "Kelyson Aguilar" }
+        ],
+        "author": [
+          { "@type": "Person", "name": "Guga Alves" },
+          { "@type": "Person", "name": "Kelyson Aguilar" }
+        ],
+        "about": {
+          "@type": "SportsTeam",
+          "name": "Clube de Regatas do Flamengo",
+          "alternateName": "Flamengo",
+          "sport": "Soccer"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://kellystao.github.io/kellystao/#website",
+        "name": "Kellystão",
+        "alternateName": "Kellystão - Mercado do Flamengo",
+        "url": "https://kellystao.github.io/kellystao/",
+        "description": "Veja rumores, negociações e sondagens apontadas para o elenco do Flamengo.",
+        "inLanguage": "pt-BR",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Kellystão",
+          "url": "https://kellystao.github.io/kellystao/",
+          "founder": [
+            { "@type": "Person", "name": "Kelyson Aguilar" },
+            { "@type": "Person", "name": "Guga Alves" }
+          ]
+        }
+      }
+    ]
+  }
+  </script>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -26,39 +93,52 @@
 
   <!-- Minimalist Top Navigation Header -->
   <header class="bg-white/90 border-b border-slate-200 sticky top-0 z-30 backdrop-blur-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+      <div class="flex flex-row items-center justify-between gap-3">
         
         <!-- App Brand -->
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-md shadow-red-600/20 shrink-0">
-            <i data-lucide="flame" class="w-5 h-5"></i>
+        <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-md shadow-red-600/20 shrink-0">
+            <i data-lucide="flame" class="w-4 h-4 sm:w-5 sm:h-5"></i>
           </div>
-          <div>
-            <h1 class="text-xl font-extrabold tracking-tight text-slate-900">Kellystão</h1>
-            <p class="text-xs text-slate-500 font-medium">Mercado & Especulações do Flamengo</p>
+          <div class="min-w-0">
+            <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 truncate">Kellystão</h1>
+            <p class="hidden sm:block text-xs text-slate-500 font-medium">Mercado & Especulações do Flamengo</p>
           </div>
         </div>
 
-        <!-- Controls: Info & OBS Mode -->
-        <div class="flex flex-wrap items-center gap-2">
+        <!-- Controls: Theme, Info & OBS Mode -->
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
           
           <!-- Site Theme Switcher Button -->
-          <button id="site-theme-toggle" onclick="toggleSiteTheme()" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 shadow-sm transition flex items-center gap-1.5 cursor-pointer" title="Alternar Modo Claro / Escuro">
+          <button
+            id="site-theme-toggle"
+            onclick="toggleSiteTheme()"
+            class="p-2 sm:px-3.5 sm:py-2 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 shadow-sm transition flex items-center gap-1.5 cursor-pointer"
+            title="Alternar para Modo Escuro"
+            aria-label="Alternar para Modo Escuro">
             <i data-lucide="moon" id="site-theme-icon" class="w-4 h-4 text-slate-600"></i>
-            <span id="site-theme-text">Modo Escuro</span>
+            <span id="site-theme-text" class="hidden sm:inline">Modo Escuro</span>
           </button>
 
           <!-- Mais Informações Button -->
-          <button onclick="openInfoModal()" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+          <button
+            onclick="openInfoModal()"
+            class="p-2 sm:px-3.5 sm:py-2 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 shadow-sm transition flex items-center gap-1.5 cursor-pointer"
+            title="Mais Informações"
+            aria-label="Mais Informações">
             <i data-lucide="info" class="w-4 h-4 text-slate-500"></i>
-            <span>Mais Informações</span>
+            <span class="hidden sm:inline">Mais Informações</span>
           </button>
 
           <!-- OBS Mode Button -->
-          <button onclick="openObsModal()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 transition flex items-center gap-1.5 cursor-pointer">
+          <button
+            onclick="openObsModal()"
+            class="p-2 sm:px-3.5 sm:py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 transition flex items-center gap-1.5 cursor-pointer"
+            title="Modo OBS Live"
+            aria-label="Modo OBS Live">
             <i data-lucide="tv" class="w-4 h-4 text-slate-600"></i>
-            <span>Modo OBS Live</span>
+            <span class="hidden sm:inline">Modo OBS Live</span>
           </button>
 
         </div>
@@ -66,26 +146,26 @@
       </div>
 
       <!-- Filter Controls: Dropdown Selectors with Checkboxes -->
-      <div class="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
-        <div class="flex flex-wrap items-center gap-2.5">
+      <div class="mt-3 pt-2.5 sm:mt-4 sm:pt-3 border-t border-slate-100 flex flex-nowrap items-center justify-between gap-2 sm:gap-3">
+        <div class="flex flex-nowrap items-center gap-1.5 sm:gap-2.5 min-w-0 overflow-x-auto">
           <!-- Position Dropdown Container -->
-          <div id="position-dropdown-container" class="relative">
+          <div id="position-dropdown-container" class="relative shrink-0">
             <!-- Injected by app.js -->
           </div>
 
           <!-- Status Dropdown Container -->
-          <div id="status-dropdown-container" class="relative">
+          <div id="status-dropdown-container" class="relative shrink-0">
             <!-- Injected by app.js -->
           </div>
 
           <!-- Reset Filters Button Container -->
-          <div id="reset-filters-container">
+          <div id="reset-filters-container" class="shrink-0">
             <!-- Injected by app.js -->
           </div>
         </div>
 
         <!-- Counter info -->
-        <div id="filter-counter" class="text-xs font-semibold text-slate-500">
+        <div id="filter-counter" class="text-[11px] sm:text-xs font-semibold text-slate-500 shrink-0 ml-auto whitespace-nowrap">
           <!-- Injected by app.js -->
         </div>
       </div>
@@ -120,7 +200,7 @@
   <footer class="mt-16 border-t border-slate-200 bg-white/60 py-8 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <p class="font-medium">
-        Lista idelizada por <strong class="text-slate-700">Kellyson Aguilar</strong> &bull; Site criado por <strong class="text-slate-700">Guga Alves</strong>
+        Lista idelizada por <strong class="text-slate-700">Kelyson Aguilar</strong> &bull; Site criado por <strong class="text-slate-700">Guga Alves</strong>
       </p>
     </div>
   </footer>
@@ -154,7 +234,7 @@
           <ul class="space-y-1.5 pl-1">
             <li class="flex items-center gap-2">
               <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-              <span><strong>Ideia original da lista:</strong> Kellyson Aguilar</span>
+              <span><strong>Ideia original da lista:</strong> Kelyson Aguilar</span>
             </li>
             <li class="flex items-center gap-2">
               <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
@@ -169,7 +249,7 @@
             <span>Vai usar o site em live ou vídeos?</span>
           </p>
           <p class="text-[11px] leading-snug">
-            Se você utilizar este site em transmissões no YouTube, lives ou redes sociais, pedimos gentilmente que credite os autores (<strong>Kellyson Aguilar</strong> e <strong>Guga Alves</strong>) na sua live ou na descrição do conteúdo. Valeu!
+            Se você utilizar este site em transmissões no YouTube, lives ou redes sociais, pedimos gentilmente que credite os autores (<strong>Kelyson Aguilar</strong> e <strong>Guga Alves</strong>) na sua live ou na descrição do conteúdo. Valeu!
           </p>
         </div>
       </div>

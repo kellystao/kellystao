@@ -263,13 +263,18 @@ const INITIAL_SPECULATIONS = [
     const isOpen = state.openDropdown === 'position';
   
     let buttonLabel = 'Posições: Todas';
+    let shortLabel = 'Posições';
     if (selectedCount === 0) {
       buttonLabel = 'Posição: Nenhuma';
+      shortLabel = 'Nenhuma';
     } else if (selectedCount === 1) {
       const single = POSITIONS_ORDER.find(p => p.id === state.selectedPositions[0]);
-      buttonLabel = `Posição: ${single ? single.title : state.selectedPositions[0]}`;
+      const title = single ? single.title : state.selectedPositions[0];
+      buttonLabel = `Posição: ${title}`;
+      shortLabel = title;
     } else if (!isAllSelected) {
       buttonLabel = `Posições (${selectedCount} sel.)`;
+      shortLabel = `${selectedCount} pos.`;
     }
   
     const btnActiveClass = (!isAllSelected || isOpen)
@@ -279,10 +284,13 @@ const INITIAL_SPECULATIONS = [
     let html = `
       <button
         onclick="toggleDropdown('position', event)"
-        class="px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all flex items-center gap-2 ${btnActiveClass}">
-        <i data-lucide="users" class="w-4 h-4"></i>
-        <span>${buttonLabel}</span>
-        <i data-lucide="${isOpen ? 'chevron-up' : 'chevron-down'}" class="w-3.5 h-3.5 opacity-70"></i>
+        class="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl border text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1.5 sm:gap-2 ${btnActiveClass}"
+        title="${buttonLabel}"
+        aria-label="${buttonLabel}">
+        <i data-lucide="users" class="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"></i>
+        <span class="sm:hidden">${shortLabel}</span>
+        <span class="hidden sm:inline">${buttonLabel}</span>
+        <i data-lucide="${isOpen ? 'chevron-up' : 'chevron-down'}" class="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-70 shrink-0"></i>
       </button>
     `;
   
@@ -336,14 +344,21 @@ const INITIAL_SPECULATIONS = [
     const isAllSelected = selectedCount === totalStatusCount;
     const isOpen = state.openDropdown === 'status';
   
+    const stTitleMap = { 'ESPECULAÇÃO': 'Especulação', 'CONTRATADO': 'Contratado', 'OUTRO CLUBE': 'Foi pra outro time', 'DESCARTADO': 'Descartado' };
+    const stShortMap = { 'ESPECULAÇÃO': 'Especulação', 'CONTRATADO': 'Contratado', 'OUTRO CLUBE': 'Outro time', 'DESCARTADO': 'Descartado' };
+
     let buttonLabel = 'Status: Todos';
+    let shortLabel = 'Status';
     if (selectedCount === 0) {
       buttonLabel = 'Status: Nenhum';
+      shortLabel = 'Nenhum';
     } else if (selectedCount === 1) {
-      const stTitleMap = { 'ESPECULAÇÃO': 'Especulação', 'CONTRATADO': 'Contratado', 'OUTRO CLUBE': 'Foi pra outro time', 'DESCARTADO': 'Descartado' };
-      buttonLabel = `Status: ${stTitleMap[state.selectedStatuses[0]] || state.selectedStatuses[0]}`;
+      const key = state.selectedStatuses[0];
+      buttonLabel = `Status: ${stTitleMap[key] || key}`;
+      shortLabel = stShortMap[key] || key;
     } else if (!isAllSelected) {
       buttonLabel = `Status (${selectedCount} sel.)`;
+      shortLabel = `${selectedCount} st.`;
     }
   
     const btnActiveClass = (!isAllSelected || isOpen)
@@ -360,10 +375,13 @@ const INITIAL_SPECULATIONS = [
     let html = `
       <button
         onclick="toggleDropdown('status', event)"
-        class="px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all flex items-center gap-2 ${btnActiveClass}">
-        <i data-lucide="filter" class="w-4 h-4"></i>
-        <span>${buttonLabel}</span>
-        <i data-lucide="${isOpen ? 'chevron-up' : 'chevron-down'}" class="w-3.5 h-3.5 opacity-70"></i>
+        class="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl border text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1.5 sm:gap-2 ${btnActiveClass}"
+        title="${buttonLabel}"
+        aria-label="${buttonLabel}">
+        <i data-lucide="filter" class="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"></i>
+        <span class="sm:hidden">${shortLabel}</span>
+        <span class="hidden sm:inline">${buttonLabel}</span>
+        <i data-lucide="${isOpen ? 'chevron-up' : 'chevron-down'}" class="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-70 shrink-0"></i>
       </button>
     `;
   
@@ -424,10 +442,11 @@ const INITIAL_SPECULATIONS = [
       container.innerHTML = `
         <button
           onclick="resetFilters()"
-          class="px-3 py-2 text-xs font-semibold text-slate-600 hover:text-red-600 bg-slate-100 hover:bg-red-50 rounded-xl border border-slate-200 transition flex items-center gap-1.5"
-          title="Restaurar todos os filtros">
+          class="p-1.5 sm:px-3 sm:py-2 text-[11px] sm:text-xs font-semibold text-slate-600 hover:text-red-600 bg-slate-100 hover:bg-red-50 rounded-lg sm:rounded-xl border border-slate-200 transition flex items-center gap-1.5"
+          title="Restaurar todos os filtros"
+          aria-label="Restaurar todos os filtros">
           <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-          <span>Restaurar</span>
+          <span class="hidden sm:inline">Restaurar</span>
         </button>
       `;
     } else {
@@ -443,7 +462,10 @@ const INITIAL_SPECULATIONS = [
     if (!container) return;
   
     const filteredItems = getFilteredItems();
-    container.innerHTML = `Mostrando <strong class="text-slate-900 font-bold">${filteredItems.length}</strong> de <strong class="text-slate-900 font-bold">${state.items.length}</strong> jogadores`;
+    container.innerHTML = `
+      <span class="sm:hidden"><strong class="text-slate-900 font-bold">${filteredItems.length}</strong>/<strong class="text-slate-900 font-bold">${state.items.length}</strong></span>
+      <span class="hidden sm:inline">Mostrando <strong class="text-slate-900 font-bold">${filteredItems.length}</strong> de <strong class="text-slate-900 font-bold">${state.items.length}</strong> jogadores</span>
+    `;
   }
   
   /**
@@ -632,6 +654,10 @@ const INITIAL_SPECULATIONS = [
       document.body.classList.add('dark');
       localStorage.setItem('site_theme', 'dark');
       if (label) label.textContent = 'Modo Claro';
+      if (btn) {
+        btn.title = 'Alternar para Modo Claro';
+        btn.setAttribute('aria-label', 'Alternar para Modo Claro');
+      }
       if (icon) {
         icon.setAttribute('data-lucide', 'sun');
         icon.className = 'w-4 h-4 text-amber-400';
@@ -640,6 +666,10 @@ const INITIAL_SPECULATIONS = [
       document.body.classList.remove('dark');
       localStorage.setItem('site_theme', 'light');
       if (label) label.textContent = 'Modo Escuro';
+      if (btn) {
+        btn.title = 'Alternar para Modo Escuro';
+        btn.setAttribute('aria-label', 'Alternar para Modo Escuro');
+      }
       if (icon) {
         icon.setAttribute('data-lucide', 'moon');
         icon.className = 'w-4 h-4 text-slate-600';
