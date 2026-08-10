@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Cache-bust CSS/JS (GitHub Pages CDN)
         env:
@@ -39,8 +39,9 @@ jobs:
               base = url.split("?", 1)[0]
               return f"{attr}={quote}{base}?v={version}{quote}"
 
+          # Aceita refs com ou sem query string já existente (?v=...)
           updated, count = re.subn(
-              r'(href|src)=(["\'])(?!https?:|//)([^"\']+\.(?:css|js))\2',
+              r'(href|src)=(["\'])(?!https?:|//)([^"\']+\.(?:css|js)(?:\?[^"\']*)?)\2',
               bust,
               text,
           )
@@ -51,13 +52,13 @@ jobs:
           PY
 
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: .
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
