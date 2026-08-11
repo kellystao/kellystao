@@ -26,6 +26,8 @@ let obsState = {
   spotlightIndex: 0,
   /** Categorias desativadas (não entram na exibição). Vazio = mostra tudo. */
   disabledStatuses: [],
+  /** Posições desativadas no Modo Live. Vazio = mostra todas. */
+  disabledPositions: [],
   /** Ordenação da tabela do Modo OBS. */
   tableSort: { key: 'position', dir: 'asc' },
   carouselResizeBound: false
@@ -159,6 +161,7 @@ function openObsModal(options = {}) {
     obsState.spotlightIndex = 0;
     obsState.search = '';
     obsState.disabledStatuses = [];
+    obsState.disabledPositions = [];
     window.__obsCarouselScrollLeft = 0;
 
     if (options.fromUrl) {
@@ -184,7 +187,7 @@ function openObsModal(options = {}) {
 function getObsStatusCategory(item) {
   const norm = (item.status || '').toUpperCase();
   if (norm === 'CONTRATADO') return 'CONTRATADO';
-  if (norm === 'FOI PRA OUTRO CLUBE' || norm === 'OUTRO CLUBE') return 'OUTRO_CLUBE';
+  if (norm === 'OUTRO CLUBE') return 'OUTRO_CLUBE';
   return 'ESPECULACAO';
 }
 
@@ -199,6 +202,21 @@ function toggleObsStatusCategory(category) {
     obsState.disabledStatuses.splice(idx, 1);
   } else {
     obsState.disabledStatuses.push(category);
+  }
+  obsState.spotlightIndex = 0;
+  renderObsLiveContent();
+}
+
+/**
+ * Alterna ativação de uma posição no Modo OBS.
+ * @param {string} positionId - ex: 'GOLEIRO', 'MEIA'
+ */
+function toggleObsPosition(positionId) {
+  const idx = obsState.disabledPositions.indexOf(positionId);
+  if (idx >= 0) {
+    obsState.disabledPositions.splice(idx, 1);
+  } else {
+    obsState.disabledPositions.push(positionId);
   }
   obsState.spotlightIndex = 0;
   renderObsLiveContent();
@@ -412,6 +430,49 @@ function renderObsStatsBar(items) {
 }
 
 /**
+ * Renderiza filtros discretos por posição (chips On/Off).
+ * @param {Array} items
+ */
+function renderObsPositionBar(items) {
+  const posContainer = document.getElementById('obs-position-bar');
+  if (!posContainer) return;
+
+  const t = getObsThemeClasses();
+  const positions = window.POSITIONS_ORDER || [];
+
+  const chipOn = t.isLight
+    ? 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:text-slate-900'
+    : 'bg-slate-900/70 text-slate-300 border-slate-700 hover:border-slate-500 hover:text-slate-100';
+  const chipOff = t.isLight
+    ? 'bg-slate-100 text-slate-400 border-slate-200/80 line-through decoration-slate-400'
+    : 'bg-slate-950/50 text-slate-600 border-slate-800 line-through decoration-slate-600';
+
+  const chips = positions.map(pos => {
+    const count = items.filter(i => (i.position || '').toUpperCase() === pos.id).length;
+    const isDisabled = obsState.disabledPositions.includes(pos.id);
+    const isOn = !isDisabled;
+    return `
+      <button
+        type="button"
+        role="switch"
+        aria-checked="${isOn ? 'true' : 'false'}"
+        aria-label="${isOn ? 'Desativar' : 'Ativar'} ${pos.title}"
+        title="${isOn ? 'Ocultar ' + pos.title : 'Mostrar ' + pos.title}"
+        onclick="toggleObsPosition('${pos.id}')"
+        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-semibold transition cursor-pointer ${isOn ? chipOn : chipOff}">
+        <span>${pos.title}</span>
+        <span class="font-mono text-[10px] opacity-70">${count}</span>
+      </button>
+    `;
+  }).join('');
+
+  posContainer.innerHTML = `
+    <span class="text-[10px] font-bold uppercase tracking-wider ${t.muted} mr-1">Posições</span>
+    ${chips}
+  `;
+}
+
+/**
  * Ordena como a lista principal do index: POSITIONS_ORDER, depois STATUS_DISPLAY_ORDER.
  * @param {Array} items
  * @returns {Array}
@@ -441,10 +502,14 @@ function renderObsLiveContent() {
 
   const allItems = (window.state && window.state.items) ? window.state.items : [];
   renderObsStatsBar(allItems);
+  renderObsPositionBar(allItems);
 
   let filtered = allItems;
   if (obsState.disabledStatuses.length > 0) {
     filtered = filtered.filter(i => !obsState.disabledStatuses.includes(getObsStatusCategory(i)));
+  }
+  if (obsState.disabledPositions.length > 0) {
+    filtered = filtered.filter(i => !obsState.disabledPositions.includes((i.position || '').toUpperCase()));
   }
   if (obsState.search) {
     filtered = filtered.filter(i =>
@@ -460,15 +525,24 @@ function renderObsLiveContent() {
 
   if (filtered.length === 0) {
     const t = getObsThemeClasses();
+    const positionsCount = (window.POSITIONS_ORDER || []).length;
+    const allStatusesOff = obsState.disabledStatuses.length === 3;
+    const allPositionsOff = positionsCount > 0 && obsState.disabledPositions.length === positionsCount;
+    const anyFilterOff = obsState.disabledStatuses.length > 0 || obsState.disabledPositions.length > 0;
+
     let emptyMsg = 'Nenhum jogador encontrado.';
-    if (obsState.disabledStatuses.length === 3) {
-      emptyMsg = 'Todas as categorias estão desativadas. Clique em um card para reativar.';
-    } else if (obsState.search && obsState.disabledStatuses.length > 0) {
-      emptyMsg = `Nenhum jogador encontrado com a busca "${obsState.search}" nas categorias ativas.`;
+    if (allStatusesOff && allPositionsOff) {
+      emptyMsg = 'Todos os filtros estão desativados. Ative um status ou posição para continuar.';
+    } else if (allStatusesOff) {
+      emptyMsg = 'Todas as categorias de status estão desativadas. Clique em um card para reativar.';
+    } else if (allPositionsOff) {
+      emptyMsg = 'Todas as posições estão desativadas. Clique em uma posição para reativar.';
+    } else if (obsState.search && anyFilterOff) {
+      emptyMsg = `Nenhum jogador encontrado com a busca "${obsState.search}" nos filtros ativos.`;
     } else if (obsState.search) {
       emptyMsg = `Nenhum jogador encontrado com a busca "${obsState.search}".`;
-    } else if (obsState.disabledStatuses.length > 0) {
-      emptyMsg = 'Nenhum jogador nas categorias ativas.';
+    } else if (anyFilterOff) {
+      emptyMsg = 'Nenhum jogador nos filtros ativos.';
     }
     container.innerHTML = `
       <div class="text-center py-12 ${t.empty}">
@@ -510,7 +584,7 @@ function renderObsSpotlightMode(container, filtered) {
   const currentItem = filtered[obsState.spotlightIndex];
   const badge = window.getStatusBadge ? window.getStatusBadge(currentItem.status) : { bg: 'bg-slate-700 text-slate-200 border-slate-600', text: currentItem.status };
   const normStatus = (currentItem.status || '').toUpperCase();
-  const isOutroClube = normStatus === 'OUTRO CLUBE' || normStatus === 'FOI PRA OUTRO CLUBE';
+  const isOutroClube = normStatus === 'OUTRO CLUBE';
   const hasDestination = isOutroClube && currentItem.destinationClub && currentItem.destinationClub.trim();
   const playerImg = (currentItem.img || '').trim();
   const hasImg = playerImg.length > 0;
@@ -839,7 +913,7 @@ function getObsPositionSortIndex(position) {
  */
 function getObsDestFonteSortValue(item) {
   const normStatus = (item.status || '').toUpperCase();
-  const isOutroClube = normStatus === 'OUTRO CLUBE' || normStatus === 'FOI PRA OUTRO CLUBE';
+  const isOutroClube = normStatus === 'OUTRO CLUBE';
   if (isOutroClube && item.destinationClub && item.destinationClub.trim()) {
     return `Contratado por: ${item.destinationClub}`.trim();
   }
@@ -953,7 +1027,7 @@ function renderObsTableMode(container, filtered) {
             ${sorted.map((item, idx) => {
               const badge = window.getStatusBadge ? window.getStatusBadge(item.status) : { bg: 'bg-slate-700 text-slate-200 border-slate-600', text: item.status };
               const normStatus = (item.status || '').toUpperCase();
-              const isOutroClube = normStatus === 'OUTRO CLUBE' || normStatus === 'FOI PRA OUTRO CLUBE';
+              const isOutroClube = normStatus === 'OUTRO CLUBE';
               const hasDestination = isOutroClube && item.destinationClub && item.destinationClub.trim();
               const isEven = idx % 2 === 0;
 

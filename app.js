@@ -31,8 +31,7 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
    */
   function getStatusSortIndex(status) {
     const norm = (status || '').toUpperCase();
-    const mapped = norm === 'FOI PRA OUTRO CLUBE' ? 'OUTRO CLUBE' : norm;
-    const idx = STATUS_DISPLAY_ORDER.indexOf(mapped);
+    const idx = STATUS_DISPLAY_ORDER.indexOf(norm);
     return idx === -1 ? STATUS_DISPLAY_ORDER.length : idx;
   }
 
@@ -81,7 +80,7 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
         text: 'CONTRATADO'
       };
     }
-    if (norm === 'FOI PRA OUTRO CLUBE' || norm === 'OUTRO CLUBE') {
+    if (norm === 'OUTRO CLUBE') {
       return {
         bg: 'bg-amber-50 text-amber-700 border-amber-200/80',
         text: 'FOI PRA OUTRO TIME'
@@ -108,7 +107,7 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
       const norm = (item.status || '').toUpperCase();
       if (norm === 'CONTRATADO') {
         itemNormalizedStatus = 'CONTRATADO';
-      } else if (norm === 'FOI PRA OUTRO CLUBE' || norm === 'OUTRO CLUBE') {
+      } else if (norm === 'OUTRO CLUBE') {
         itemNormalizedStatus = 'OUTRO CLUBE';
       }
   
@@ -395,8 +394,8 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
               const count = state.items.filter(item => {
                 const norm = (item.status || '').toUpperCase();
                 if (st.id === 'CONTRATADO') return norm === 'CONTRATADO';
-                if (st.id === 'OUTRO CLUBE') return norm === 'FOI PRA OUTRO CLUBE' || norm === 'OUTRO CLUBE';
-                return norm !== 'CONTRATADO' && norm !== 'FOI PRA OUTRO CLUBE' && norm !== 'OUTRO CLUBE';
+                if (st.id === 'OUTRO CLUBE') return norm === 'OUTRO CLUBE';
+                return norm !== 'CONTRATADO' && norm !== 'OUTRO CLUBE';
               }).length;
   
               return `
@@ -528,7 +527,7 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
             ${groupItems.map(item => {
               const badge = getStatusBadge(item.status);
               const normStatus = (item.status || '').toUpperCase();
-              const isOutroClube = normStatus === 'OUTRO CLUBE' || normStatus === 'FOI PRA OUTRO CLUBE';
+              const isOutroClube = normStatus === 'OUTRO CLUBE';
               const hasDestination = isOutroClube && item.destinationClub && item.destinationClub.trim();
               const hasSource = item.source && item.source.trim() && item.source.trim().toLowerCase() !== 'não informado';
               const linkUrl = (item.sourceUrl || item.url || '').trim();
@@ -598,11 +597,11 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
                           <span>Visto em:</span>
                           ${hasUrl ? `
                             <a href="${linkUrl}" target="_blank" rel="noopener noreferrer" class="source-link text-red-600 hover:text-red-700 hover:underline font-medium inline-flex items-center gap-1">
-                              <span>${item.source}</span>
+                              <strong>${item.source}</strong>
                               <i data-lucide="external-link" class="w-3 h-3 text-red-600"></i>
                             </a>
                           ` : `
-                            <span class="source-link text-red-600 font-medium">${item.source}</span>
+                            <span class="text-slate-700 font-medium">${item.source}</span>
                           `}
                         </div>
                       ` : ''}

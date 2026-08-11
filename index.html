@@ -87,7 +87,7 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <!-- Custom Styles -->
-  <link rel="stylesheet" href="style.css?v=20260810ag" />
+  <link rel="stylesheet" href="style.css?v=20260810ak" />
 </head>
 <body class="bg-[#f8fafc] text-slate-900 min-h-screen font-sans antialiased">
 
@@ -184,13 +184,21 @@
         Acompanhe os nomes especulados no Mengão
       </h2>
       <p class="text-sm sm:text-base text-slate-300 font-normal leading-relaxed">
-        Veja rumores, negociações e sondagens apontadas para o elenco do Flamengo. Atualizado para ajudar torcedores, criadores de conteúdo e imprensa esportiva.
+        Veja rumores, negociações e sondagens apontadas para o elenco do Flamengo.<br>Site criado para ajudar torcedores, criadores de conteúdo e imprensa esportiva.
       </p>
     </div>
   </section>
 
   <!-- Main Content Container -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
+    <p id="club-disclaimer" class="club-disclaimer flex items-center gap-2 text-xs sm:text-sm text-slate-500 leading-relaxed">
+      <i data-lucide="info" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+      <span>
+        <span class="font-semibold text-slate-600">Nota:</span>
+        o clube descrito em cada jogador é o da época da especulação, e não necessariamente ainda é o seu clube atual.
+      </span>
+    </p>
+
     <!-- Sections Container -->
     <div id="sections-container" class="space-y-10">
       <!-- Position sections with clean cards injected by app.js -->
@@ -201,7 +209,7 @@
   <footer class="mt-16 border-t border-slate-200 bg-white/60 py-8 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <p class="font-medium">
-        Lista idelizada por <strong class="text-slate-700">Kelysson Aguilar</strong> &bull; Site criado por <a href="https://x.com/GugaAlvesFla" target="_blank" rel="noopener noreferrer" class="font-bold text-slate-700 hover:text-red-600 transition">Guga Alves</a>
+        Lista idealizada por <strong class="text-slate-700">Kelysson Aguilar</strong> &bull; Site criado por <a href="https://x.com/GugaAlvesFla" target="_blank" rel="noopener noreferrer" class="font-bold text-slate-700 hover:text-red-600 transition">Guga Alves</a>
       </p>
     </div>
   </footer>
@@ -359,22 +367,27 @@
 
     <!-- Live Content Container -->
     <div id="obs-main-content" class="flex-1 p-6 max-w-7xl mx-auto w-full space-y-6">
-      <!-- Live Stats Bar -->
+      <!-- Live Status Filters -->
       <div id="obs-stats-bar" class="grid grid-cols-3 gap-3">
-        <!-- Injected by app.js -->
+        <!-- Injected by live.js -->
+      </div>
+
+      <!-- Live Position Filters -->
+      <div id="obs-position-bar" class="flex flex-wrap items-center gap-2">
+        <!-- Injected by live.js -->
       </div>
 
       <!-- Main Live Display -->
       <div id="obs-list">
-        <!-- Injected by app.js -->
+        <!-- Injected by live.js -->
       </div>
     </div>
   </div>
 
   <!-- Static JS Scripts -->
   <script src="data/players.js?v=20260810h"></script>
-  <script src="app.js?v=20260810af"></script>
-  <script src="live.js?v=20260810ag"></script>
+  <script src="app.js?v=20260810an"></script>
+  <script src="live.js?v=20260810an"></script>
 
 </body>
 </html>

@@ -176,14 +176,20 @@ body.dark .clean-card span.text-slate-500 {
   color: #94a3b8 !important;
 }
 
+body.dark .clean-card span.text-slate-700 {
+  color: #cbd5e1 !important;
+}
+
 body.dark .clean-card .source-link,
 body.dark .clean-card .source-link .text-red-600,
-body.dark .clean-card a.source-link {
+body.dark .clean-card a.source-link,
+body.dark .clean-card a.source-link strong {
   color: #f87171 !important; /* red-400 — legível no card escuro */
 }
 
 body.dark .clean-card a.source-link:hover,
-body.dark .clean-card a.source-link:hover .text-red-600 {
+body.dark .clean-card a.source-link:hover .text-red-600,
+body.dark .clean-card a.source-link:hover strong {
   color: #fca5a5 !important;
 }
 
@@ -198,6 +204,14 @@ body.dark .section-title-line span {
 
 body.dark .section-title-line::after {
   background-color: #1e293b;
+}
+
+body.dark .club-disclaimer {
+  color: #94a3b8;
+}
+
+body.dark .club-disclaimer .text-slate-600 {
+  color: #cbd5e1 !important;
 }
 
 body.dark footer {

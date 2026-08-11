@@ -70,5 +70,5 @@ window.INITIAL_SPECULATIONS = [
   { id: '51', playerName: 'Romelu Lukaku', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Napoli', status: 'ESPECULAÇÃO', source: 'Aupseven', sourceUrl: '' },
   { id: '52', playerName: 'Kevin Viveros', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Athletico Paranaense', status: 'ESPECULAÇÃO', source: 'GE', sourceUrl: '' },
   { id: '53', playerName: 'Tiziano Perrota', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Banfield', status: 'ESPECULAÇÃO', source: 'Mauro Cesar Pereira', sourceUrl: 'https://x.com/maurocezar/status/2086508154872049702?s=20' },
-  { id: '57', playerName: 'Memphis Depay', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Corinthians', status: 'ESPECULAÇÃO', source: 'ESPN Holanda', sourceUrl: '' }
+  { id: '57', playerName: 'Memphis Depay', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'Corinthians', status: 'ESPECULAÇÃO', source: 'ESPN Holanda', sourceUrl: 'https://x.com/PapaRubroNegro/status/2081004011621159224', img: 'img/memphis-depay-57.webp' }
 ];
