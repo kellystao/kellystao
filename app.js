@@ -35,6 +35,8 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
     const idx = STATUS_DISPLAY_ORDER.indexOf(mapped);
     return idx === -1 ? STATUS_DISPLAY_ORDER.length : idx;
   }
+
+  window.getStatusSortIndex = getStatusSortIndex;
   
   /**
    * Estado global reativo da aplicação.

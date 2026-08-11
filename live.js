@@ -159,6 +159,7 @@ function openObsModal(options = {}) {
     obsState.spotlightIndex = 0;
     obsState.search = '';
     obsState.disabledStatuses = [];
+    window.__obsCarouselScrollLeft = 0;
 
     if (options.fromUrl) {
       const modeFromUrl = parseObsViewModeFromUrl();
@@ -410,6 +411,29 @@ function renderObsStatsBar(items) {
   }).join('');
 }
 
+/**
+ * Ordena como a lista principal do index: POSITIONS_ORDER, depois STATUS_DISPLAY_ORDER.
+ * @param {Array} items
+ * @returns {Array}
+ */
+function sortObsItemsLikeMainList(items) {
+  const order = window.POSITIONS_ORDER || [];
+  return [...items].sort((a, b) => {
+    const posA = order.findIndex(p => p.id === (a.position || '').toUpperCase());
+    const posB = order.findIndex(p => p.id === (b.position || '').toUpperCase());
+    const idxA = posA === -1 ? order.length : posA;
+    const idxB = posB === -1 ? order.length : posB;
+    if (idxA !== idxB) return idxA - idxB;
+
+    if (typeof window.getStatusSortIndex === 'function') {
+      const statusCmp = window.getStatusSortIndex(a.status) - window.getStatusSortIndex(b.status);
+      if (statusCmp !== 0) return statusCmp;
+    }
+
+    return (a.playerName || '').localeCompare(b.playerName || '', 'pt-BR', { sensitivity: 'base' });
+  });
+}
+
 // Main Render Function for Live Content
 function renderObsLiveContent() {
   const container = document.getElementById('obs-list');
@@ -430,6 +454,9 @@ function renderObsLiveContent() {
       (i.source && i.source.toLowerCase().includes(obsState.search))
     );
   }
+
+  // Destaque (setas + slider) e base da tabela: mesma ordem do index.html
+  filtered = sortObsItemsLikeMainList(filtered);
 
   if (filtered.length === 0) {
     const t = getObsThemeClasses();
@@ -468,6 +495,9 @@ function renderObsLiveContent() {
 // DESTAQUES / BANNER MODE (SPOTLIGHT CARD)
 // ---------------------------------------------------
 function renderObsSpotlightMode(container, filtered) {
+  const prevTrack = document.getElementById('obs-carousel-track');
+  if (prevTrack) window.__obsCarouselScrollLeft = prevTrack.scrollLeft;
+
   const t = getObsThemeClasses();
 
   if (obsState.spotlightIndex >= filtered.length) {
@@ -588,7 +618,7 @@ function renderObsSpotlightMode(container, filtered) {
             class="obs-carousel-wrap relative flex-1 min-w-0 ${t.isLight ? 'obs-carousel-wrap--light' : 'obs-carousel-wrap--dark'}">
             <div
               id="obs-carousel-track"
-              class="obs-carousel-track flex items-center gap-2 overflow-x-auto scroll-smooth snap-x snap-mandatory py-1 px-1">
+              class="obs-carousel-track flex items-center gap-2 overflow-x-auto snap-x snap-proximity py-1 px-1">
               ${filtered.map((item, idx) => {
                 const isSelected = idx === obsState.spotlightIndex;
                 return `
@@ -626,9 +656,55 @@ function renderObsSpotlightMode(container, filtered) {
   `;
 
   container.innerHTML = html;
+
+  const savedScroll = typeof window.__obsCarouselScrollLeft === 'number'
+    ? window.__obsCarouselScrollLeft
+    : 0;
+
   requestAnimationFrame(() => {
-    initObsCarouselUX();
+    const track = document.getElementById('obs-carousel-track');
+    if (track) track.scrollLeft = savedScroll;
+    initObsCarouselUX({ smoothCenter: true });
   });
+}
+
+/**
+ * Animação suave de scroll horizontal (ease-in-out).
+ * @param {HTMLElement} el
+ * @param {number} targetLeft
+ * @param {number} [duration=560]
+ */
+function animateObsCarouselScroll(el, targetLeft, duration = 560) {
+  const maxScroll = Math.max(0, el.scrollWidth - el.clientWidth);
+  const target = Math.max(0, Math.min(maxScroll, targetLeft));
+  const start = el.scrollLeft;
+  const delta = target - start;
+  if (Math.abs(delta) < 1) {
+    el.scrollLeft = target;
+    updateObsCarouselChrome();
+    return;
+  }
+
+  if (el.__obsCarouselAnim) {
+    cancelAnimationFrame(el.__obsCarouselAnim);
+  }
+
+  const startTime = performance.now();
+  const easeInOut = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+
+  const frame = (now) => {
+    const progress = Math.min(1, (now - startTime) / duration);
+    el.scrollLeft = start + delta * easeInOut(progress);
+    updateObsCarouselChrome();
+    if (progress < 1) {
+      el.__obsCarouselAnim = requestAnimationFrame(frame);
+    } else {
+      el.__obsCarouselAnim = null;
+      window.__obsCarouselScrollLeft = el.scrollLeft;
+    }
+  };
+
+  el.__obsCarouselAnim = requestAnimationFrame(frame);
 }
 
 /**
@@ -638,8 +714,8 @@ function renderObsSpotlightMode(container, filtered) {
 function scrollObsCarousel(direction) {
   const track = document.getElementById('obs-carousel-track');
   if (!track) return;
-  const step = Math.max(240, Math.round(track.clientWidth * 0.6));
-  track.scrollBy({ left: direction * step, behavior: 'smooth' });
+  const step = Math.max(180, Math.round(track.clientWidth * 0.45));
+  animateObsCarouselScroll(track, track.scrollLeft + direction * step, 520);
 }
 
 /**
@@ -650,11 +726,19 @@ function scrollObsCarouselToSelected(smooth = true) {
   const track = document.getElementById('obs-carousel-track');
   const selected = track?.querySelector('[data-obs-spotlight-selected="true"]');
   if (!track || !selected) return;
-  selected.scrollIntoView({
-    inline: 'center',
-    block: 'nearest',
-    behavior: smooth ? 'smooth' : 'auto'
-  });
+
+  const trackRect = track.getBoundingClientRect();
+  const chipRect = selected.getBoundingClientRect();
+  const offset = (chipRect.left + chipRect.width / 2) - (trackRect.left + trackRect.width / 2);
+  const target = track.scrollLeft + offset;
+
+  if (smooth) {
+    animateObsCarouselScroll(track, target, 560);
+  } else {
+    track.scrollLeft = target;
+    window.__obsCarouselScrollLeft = track.scrollLeft;
+    updateObsCarouselChrome();
+  }
 }
 
 /**
@@ -666,6 +750,8 @@ function updateObsCarouselChrome() {
   const prev = document.getElementById('obs-carousel-prev');
   const next = document.getElementById('obs-carousel-next');
   if (!track || !wrap) return;
+
+  window.__obsCarouselScrollLeft = track.scrollLeft;
 
   const maxScroll = track.scrollWidth - track.clientWidth;
   const canScroll = maxScroll > 4;
@@ -689,8 +775,10 @@ function updateObsCarouselChrome() {
 
 /**
  * Liga listeners e posiciona a faixa após renderizar o Destaque.
+ * @param {{ smoothCenter?: boolean }} [options]
  */
-function initObsCarouselUX() {
+function initObsCarouselUX(options = {}) {
+  const smoothCenter = options.smoothCenter !== false;
   const track = document.getElementById('obs-carousel-track');
   if (!track) return;
 
@@ -701,21 +789,30 @@ function initObsCarouselUX() {
     window.addEventListener('resize', updateObsCarouselChrome);
   }
 
-  scrollObsCarouselToSelected(false);
-  requestAnimationFrame(updateObsCarouselChrome);
+  // Espera o layout aplicar scrollLeft restaurado antes de centralizar
+  requestAnimationFrame(() => {
+    scrollObsCarouselToSelected(smoothCenter);
+    updateObsCarouselChrome();
+  });
 }
 
 function spotlightNext() {
+  const track = document.getElementById('obs-carousel-track');
+  if (track) window.__obsCarouselScrollLeft = track.scrollLeft;
   obsState.spotlightIndex++;
   renderObsLiveContent();
 }
 
 function spotlightPrev() {
+  const track = document.getElementById('obs-carousel-track');
+  if (track) window.__obsCarouselScrollLeft = track.scrollLeft;
   obsState.spotlightIndex--;
   renderObsLiveContent();
 }
 
 function spotlightSelect(index) {
+  const track = document.getElementById('obs-carousel-track');
+  if (track) window.__obsCarouselScrollLeft = track.scrollLeft;
   obsState.spotlightIndex = index;
   renderObsLiveContent();
 }
@@ -777,6 +874,9 @@ function sortObsTableItems(items) {
 
     if (key === 'position') {
       cmp = getObsPositionSortIndex(a.position) - getObsPositionSortIndex(b.position);
+      if (cmp === 0 && typeof window.getStatusSortIndex === 'function') {
+        cmp = window.getStatusSortIndex(a.status) - window.getStatusSortIndex(b.status);
+      }
       if (cmp === 0) {
         cmp = (a.playerName || '').localeCompare(b.playerName || '', 'pt-BR', { sensitivity: 'base' });
       }

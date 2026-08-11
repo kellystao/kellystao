@@ -308,6 +308,7 @@ body.dark #info-backdrop .bg-sky-50 a {
   scrollbar-width: thin;
   scrollbar-color: rgba(148, 163, 184, 0.55) transparent;
   -webkit-overflow-scrolling: touch;
+  scroll-behavior: auto; /* animação controlada via JS (mais suave) */
 }
 
 .obs-carousel-track::-webkit-scrollbar {
