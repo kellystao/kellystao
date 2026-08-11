@@ -545,41 +545,38 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
                 <div class="clean-card group relative flex flex-col justify-between">
                   <div>
                     <!-- Linha Superior: Foto (+ posição sobreposta) + Nome + Selo de Status -->
-                    <div class="flex items-start justify-between gap-3">
-                      <div class="flex items-start gap-3 min-w-0">
-                        ${hasImg ? `
-                          <div class="relative shrink-0 ${showPosBadge ? 'mb-2.5' : ''}">
-                            <img
-                              src="${playerImg}"
-                              alt="${item.playerName}"
-                              class="w-15 h-18 sm:w-15 sm:h-20 rounded-xl object-contain border border-slate-200 bg-slate-100 block"
-                              loading="lazy"
-                              decoding="async"
-                            />
-                            ${showPosBadge ? `
-                              <span class="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-1/2 z-10">
-                                ${posBadgeHtml}
-                              </span>
-                            ` : ''}
-                          </div>
-                        ` : ''}
-                        <div class="min-w-0">
-                          <div class="flex items-center gap-2 flex-wrap">
+                    <div class="flex flex-nowrap items-start gap-3">
+                      ${hasImg ? `
+                        <div class="relative shrink-0 w-14 sm:w-20 ${showPosBadge ? 'mb-2.5' : ''}">
+                          <img
+                            src="${playerImg}"
+                            alt="${item.playerName}"
+                            class="w-14 h-20 sm:w-20 sm:h-28 rounded-xl object-cover object-top border border-slate-200 bg-slate-100 block max-w-full"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                          ${showPosBadge ? `
+                            <span class="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-1/2 z-10">
+                              ${posBadgeHtml}
+                            </span>
+                          ` : ''}
+                        </div>
+                      ` : ''}
+                      <div class="min-w-0 flex-1">
+                        <div class="flex items-start justify-between gap-2">
+                          <div class="flex items-center gap-2 flex-wrap min-w-0">
                             <h3 class="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">
                               ${item.playerName}
                             </h3>
                             ${!hasImg ? posBadgeHtml : ''}
                           </div>
-                          <p class="text-xs font-medium text-slate-500 mt-0.5">
-                            Clube: ${item.currentClub || 'Sem clube'}
-                          </p>
+                          <span class="shrink-0 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase border ${badge.bg}">
+                            ${badge.text}
+                          </span>
                         </div>
-                      </div>
-  
-                      <div class="shrink-0">
-                        <span class="px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase border ${badge.bg}">
-                          ${badge.text}
-                        </span>
+                        <p class="text-xs font-medium text-slate-500 mt-0.5 w-full pr-0">
+                          Clube: ${item.currentClub || 'Sem clube'}
+                        </p>
                       </div>
                     </div>
                   </div>

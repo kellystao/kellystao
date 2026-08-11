@@ -39,10 +39,11 @@ window.INITIAL_SPECULATIONS = [
   { id: '23', playerName: 'Jhon Árias', position: 'PONTA', specificPosition: 'PD', currentClub: 'Wolverhampton', status: 'OUTRO CLUBE', destinationClub: 'Palmeiras', source: '', sourceUrl: '', img: 'img/jhon-arias-23.webp' },
   { id: '24', playerName: 'Antoine Griezmann', position: 'PONTA', specificPosition: 'SA', currentClub: 'Atlético de Madrid', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
   { id: '25', playerName: 'Santino Andino', position: 'PONTA', specificPosition: 'PE', currentClub: 'Colón', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
-  { id: '26', playerName: 'Exequiel Zeballos', position: 'PONTA', specificPosition: 'PE', currentClub: 'Boca', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
+  { id: '26', playerName: 'Exequiel Zeballos', position: 'PONTA', specificPosition: 'PE', currentClub: 'Boca Juniors', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },
   { id: '27', playerName: 'Luiz Henrique', position: 'PONTA', specificPosition: 'PD', currentClub: 'Zenit', status: 'ESPECULAÇÃO', source: 'diversas fontes', sourceUrl: '' },
   { id: '28', playerName: 'Léo Scienza', position: 'PONTA', specificPosition: 'PE', currentClub: 'Southampton', status: 'ESPECULAÇÃO', source: 'Momento Rubro Negro', sourceUrl: '' },
   { id: '29', playerName: 'Malcom', position: 'PONTA', specificPosition: 'PD', currentClub: 'Al Hilal', status: 'ESPECULAÇÃO', source: 'Sporting News', sourceUrl: '' },
+  { id: '58', playerName: 'Yásser Asprilla', position: 'PONTA', specificPosition: 'PD', currentClub: 'Girona', status: 'ESPECULAÇÃO', source: 'Pipe Sierra', sourceUrl: 'https://x.com/PSierraR/status/2086940696682917896?s=20', img: 'img/yasser-asprilla-58.webp' },
 
   // ATACANTES
   { id: '30', playerName: 'Taty Castellanos', position: 'ATACANTE', specificPosition: 'CA', currentClub: 'West Ham', status: 'ESPECULAÇÃO', source: '', sourceUrl: '' },

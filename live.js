@@ -541,7 +541,7 @@ function renderObsSpotlightMode(container, filtered) {
             <div class="flex flex-wrap items-center gap-4 ${t.subtle} text-sm sm:text-base font-semibold pt-1">
               <div class="flex items-center gap-1.5">
                 <i data-lucide="shield" class="w-4 h-4 text-red-500"></i>
-                <span>Clube Atual: <strong class="${t.title}">${currentItem.currentClub || 'Sem clube'}</strong></span>
+                <span>Clube: <strong class="${t.title}">${currentItem.currentClub || 'Sem clube'}</strong></span>
               </div>
               ${hasDestination ? `
                 <div class="flex items-center gap-1.5 ${t.strongAmber} font-bold">
