@@ -700,8 +700,3 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
     render();
   });
   
-  
-  
-  
-  
-
