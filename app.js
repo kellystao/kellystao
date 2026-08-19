@@ -532,6 +532,8 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
               const hasSource = item.source && item.source.trim() && item.source.trim().toLowerCase() !== 'não informado';
               const linkUrl = (item.sourceUrl || item.url || '').trim();
               const hasUrl = linkUrl.length > 0;
+              const itemDate = (item.date || '').trim();
+              const hasDate = itemDate.length > 0;
   
               const playerImg = (item.img || '').trim();
               const hasImg = playerImg.length > 0;
@@ -575,38 +577,36 @@ const INITIAL_SPECULATIONS = Array.isArray(window.INITIAL_SPECULATIONS)
                             ${badge.text}
                           </span>
                         </div>
-                        <p class="text-xs font-medium text-slate-500 mt-0.5 w-full pr-0">
+                        <p class="text-xs font-medium text-slate-500 mt-1.5 w-full pr-0">
                           Clube: ${item.currentClub || 'Sem clube'}
                         </p>
+                        ${hasDate ? `
+                          <p class="text-xs font-medium text-slate-500 mt-1.5 w-full">
+                            Data: ${itemDate}
+                          </p>
+                        ` : ''}
+                        ${hasSource ? `
+                          <div class="flex items-center gap-1 text-xs text-slate-500 font-medium mt-1.5 w-full">
+                            <span>Visto em:</span>
+                            ${hasUrl ? `
+                              <a href="${linkUrl}" target="_blank" rel="noopener noreferrer" class="source-link text-red-600 hover:text-red-700 hover:underline font-medium inline-flex items-center gap-1">
+                                <strong>${item.source}</strong>
+                                <i data-lucide="external-link" class="w-3 h-3 text-red-600"></i>
+                              </a>
+                            ` : `
+                              <span class="text-slate-700 font-medium">${item.source}</span>
+                            `}
+                          </div>
+                        ` : ''}
+                        ${hasDestination ? `
+                          <div class="flex items-center gap-1 text-xs text-slate-500 font-medium mt-1.5 w-full">
+                            <span>Contratado por:</span>
+                            <span class="text-slate-900 font-bold">${item.destinationClub}</span>
+                          </div>
+                        ` : ''}
                       </div>
                     </div>
                   </div>
-  
-                  <!-- Rodapé do Card: Clube de Destino (se houver) e Fonte da Notícia -->
-                  ${(hasDestination || hasSource) ? `
-                    <div class="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-y-1 gap-x-2 text-xs">
-                      ${hasDestination ? `
-                        <div class="flex items-center gap-1 text-slate-500 font-medium">
-                          <span>Contratado por:</span>
-                          <span class="text-slate-900 font-bold">${item.destinationClub}</span>
-                        </div>
-                      ` : ''}
-  
-                      ${hasSource ? `
-                        <div class="flex items-center gap-1 text-slate-500 font-medium ${hasDestination ? 'ml-auto' : ''}">
-                          <span>Visto em:</span>
-                          ${hasUrl ? `
-                            <a href="${linkUrl}" target="_blank" rel="noopener noreferrer" class="source-link text-red-600 hover:text-red-700 hover:underline font-medium inline-flex items-center gap-1">
-                              <strong>${item.source}</strong>
-                              <i data-lucide="external-link" class="w-3 h-3 text-red-600"></i>
-                            </a>
-                          ` : `
-                            <span class="text-slate-700 font-medium">${item.source}</span>
-                          `}
-                        </div>
-                      ` : ''}
-                    </div>
-                  ` : ''}
                 </div>
               `;
             }).join('')}
