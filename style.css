@@ -287,25 +287,25 @@ body.dark #info-backdrop .bg-sky-50 a {
   animation-play-state: paused;
 }
 
-/* Brand flame — pulse upward (no shake) */
-@keyframes flame-burn {
+/* Brand transfer arrows — subtle horizontal nudge */
+@keyframes transfer-arrows {
   0%, 100% {
-    transform: scaleY(1) scaleX(1);
+    transform: translateX(0);
     opacity: 0.92;
   }
-  40% {
-    transform: scaleY(1.18) scaleX(0.94);
+  25% {
+    transform: translateX(2px);
     opacity: 1;
   }
-  70% {
-    transform: scaleY(1.08) scaleX(1.03);
-    opacity: 0.96;
+  75% {
+    transform: translateX(-2px);
+    opacity: 1;
   }
 }
 
-.animate-flame-burn {
-  animation: flame-burn 1.1s ease-in-out infinite;
-  transform-origin: center bottom;
+.animate-transfer-arrows {
+  animation: transfer-arrows 1.4s ease-in-out infinite;
+  transform-origin: center center;
   display: block;
 }
 
